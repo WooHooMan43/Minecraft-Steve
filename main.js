@@ -27,10 +27,10 @@ client.once('ready', () => {
 		fs.mkdirSync('guilds', {recursive: true});
 		fs.mkdirSync(`guilds/${guild.id}`, {recursive: true});
 
-		fs.writeFileSync(`guilds/${guild.id}/points.json`, '{}', {flag: 'wx'}, function(err, result) {
+		fs.writeFileSync(`guilds/${guild.id}/points.json`, '{}', {flag: 'w'}, function(err, result) {
 			if(err) console.log('error', err);
 		})
-		fs.writeFileSync(`guilds/${guild.id}/configuration.json`, '{}', {flag: 'wx'}, function(err, result) {
+		fs.writeFileSync(`guilds/${guild.id}/configuration.json`, '{}', {flag: 'w'}, function(err, result) {
 			if(err) console.log('error', err);
 		})
 
@@ -68,6 +68,10 @@ client.on('message', message => {
 		client.commands.get('config').execute(message, args, properties);
 	} else if(command === 'points'){
 		client.commands.get('points').execute(message, args);
+	} else if(command === 'help'){
+		client.commands.get('help').execute(message, args);
+	} else {
+		message.reply('Unknown command. Check your spelling/syntax.')
 	}
 });
 
