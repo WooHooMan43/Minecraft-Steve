@@ -19,7 +19,7 @@ for(const file of commandFiles){
 	const command = require(`./commands/${file}`)
 
 	client.commands.set(command.name, command)
-}
+};
 
 client.once('ready', () => {
 	console.log('Steve is online!');
@@ -27,18 +27,21 @@ client.once('ready', () => {
 		fs.mkdirSync('guilds', {recursive: true});
 		fs.mkdirSync(`guilds/${guild.id}`, {recursive: true});
 
-		fs.writeFileSync(`guilds/${guild.id}/points.json`, '{}', {flag: 'w'}, function(err, result) {
-			if(err) console.log('error', err);
-		})
-		fs.writeFileSync(`guilds/${guild.id}/configuration.json`, '{}', {flag: 'w'}, function(err, result) {
-			if(err) console.log('error', err);
-		})
-
-		let userpoints_raw = fs.readFileSync(`guilds/${guild.id}/points.json`)
-		userpoints = JSON.parse(userpoints_raw);
-
-		let properties_raw = fs.readFileSync(`guilds/${guild.id}/configuration.json`);
-		properties = JSON.parse(properties_raw);
+		if (!fs.existsSync(`guilds/${guild.id}/points.json`)) {
+			fs.writeFileSync(`guilds/${guild.id}/points.json`, '{}', {flag: 'w'}, function(err, result) {
+				if(err) console.log('error', err);
+			})
+		};
+		var userpoints_raw = fs.readFileSync(`guilds/${guild.id}/points.json`);
+		var userpoints = JSON.parse(userpoints_raw);
+		
+		if (!fs.existsSync(`guilds/${guild.id}/configuration.json`)) {
+			fs.writeFileSync(`guilds/${guild.id}/configuration.json`, JSON.stringify(properties), {flag: 'w'}, function(err, result) {
+				if(err) console.log('error', err);
+			})
+		};
+		var properties_raw = fs.readFileSync(`guilds/${guild.id}/configuration.json`);
+		var properties = JSON.parse(properties_raw);
 
 		guild.members.cache.forEach(member => {
 			if (member.user.id !== client.user.id && !member.user.bot) {
@@ -55,7 +58,21 @@ client.once('ready', () => {
 })
 
 client.on('message', message => {
-	if(!message.content.startsWith(prefix) || message.author.bot) return;
+	if(!message.content.startsWith(prefix) || message.author.bot) {
+		let points_raw = fs.readFileSync(`guilds/${message.guild.id}/points.json`)
+		points = JSON.parse(points_raw);
+
+		if (message.author.id in points) {
+			points[message.author.id] += 5
+		} else {
+				points[message.author.id] = 5
+		};
+		save_points = JSON.stringify(points);
+		fs.writeFileSync(`guilds/${message.guild.id}/points.json`, save_points, function(err, result) {
+			if(err) console.log('error', err);
+		});
+		return
+	};
 
 	const args = message.content.slice(prefix.length).split(/ +/);
 	const command = args.shift().toLowerCase();
@@ -67,7 +84,7 @@ client.on('message', message => {
 	} else if(command === 'config'){
 		client.commands.get('config').execute(message, args, properties);
 	} else if(command === 'points'){
-		client.commands.get('points').execute(message, args);
+		client.commands.get('points').execute(message, args, properties);
 	} else if(command === 'help'){
 		client.commands.get('help').execute(message, args);
 	} else {

@@ -53,7 +53,7 @@ module.exports = {
 									}
 								} else if (args[0] === 'user') {
 									message.guild.members.cache.forEach(user => {
-										if (user.user.tag === args.slice(1, args.length - 1).join(' ') && !user.user.bot) {
+										if (user.user.id === args[1].substring(2,args[1].length-1) && !user.user.bot) {
 											message.reply(`${user.user.tag} has ${(user.user.id in serverpoints) ? serverpoints[user.user.id] : 0} points.`);
 										}
 									})
