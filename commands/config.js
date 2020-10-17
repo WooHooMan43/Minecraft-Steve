@@ -3,7 +3,9 @@ const fs = require("fs");
 module.exports = {
 	name: 'config',
 	description: "this is a configuration command!",
-	execute(message, args, properties){
+	execute(message, args){
+		let propertiesraw = fs.readFileSync(`./guilds/${message.guild.id}/configuration.json`);
+		var properties = JSON.parse(propertiesraw);
 		var configUsed = false
 		message.guild.roles.cache.forEach(role => {
 			if (!configUsed) {
@@ -180,7 +182,7 @@ module.exports = {
 			"UserExceptions" : properties.UserExceptions
 		};
 		let SettingsStr = JSON.stringify(saveSettings);
-		fs.writeFile("guilds/" + message.guild + "/configuration.json", SettingsStr, function(err, result) {
+		fs.writeFile(`./guilds/${message.guild.id}/configuration.json`, SettingsStr, function(err, result) {
 			if(err) console.log('error', err);
 		});
 	}

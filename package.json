@@ -9,7 +9,9 @@
   "author": "Nicklas Pawlicki",
   "license": "ISC",
   "dependencies": {
+    "base64-to-image": "^1.0.2",
     "discord.js": "^12.3.1",
-    "minecraft-server-status": "^1.0.1"
+    "minecraft-motd-parser": "^1.0.1",
+    "minecraft-server-util": "^3.0.3"
   }
 }

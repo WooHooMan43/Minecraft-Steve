@@ -8,10 +8,6 @@ const fs = require('fs');
 
 var properties = {ServerAddress:'woohoocraft.hopto.org', AdminRoles:["Admin","Administrator","Owner","Supreme Councilmen"], UserExceptions:[]};
 
-// console.log(properties)
-
-// console.log(userpoints)
-
 client.commands = new Discord.Collection();
 
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
@@ -35,13 +31,20 @@ client.once('ready', () => {
 		var userpoints_raw = fs.readFileSync(`guilds/${guild.id}/points.json`);
 		var userpoints = JSON.parse(userpoints_raw);
 		
+		var default_properties = {ServerAddress:'woohoocraft.hopto.org', AdminRoles:["Admin","Administrator","Owner","Supreme Councilmen"], UserExceptions:[]};
 		if (!fs.existsSync(`guilds/${guild.id}/configuration.json`)) {
-			fs.writeFileSync(`guilds/${guild.id}/configuration.json`, JSON.stringify(properties), {flag: 'w'}, function(err, result) {
+			fs.writeFileSync(`guilds/${guild.id}/configuration.json`, JSON.stringify(default_properties), {flag: 'w'}, function(err, result) {
 				if(err) console.log('error', err);
 			})
 		};
 		var properties_raw = fs.readFileSync(`guilds/${guild.id}/configuration.json`);
-		var properties = JSON.parse(properties_raw);
+		if (properties_raw == 'undefined') {
+			fs.writeFileSync(`guilds/${guild.id}/configuration.json`, JSON.stringify(default_properties), {flag: 'w'}, function(err, result) {
+				if(err) console.log('error', err);
+			})
+		};
+		var properties_raw = fs.readFileSync(`guilds/${guild.id}/configuration.json`);
+		properties = JSON.parse(properties_raw);
 
 		guild.members.cache.forEach(member => {
 			if (member.user.id !== client.user.id && !member.user.bot) {
@@ -77,16 +80,18 @@ client.on('message', message => {
 	const args = message.content.slice(prefix.length).split(/ +/);
 	const command = args.shift().toLowerCase();
 
-	if (command === 'ping'){
+	if (command === 'ping') {
 		client.commands.get('ping').execute(message, args);
-	} else if (command === 'status'){
-		client.commands.get('status').execute(message, args, properties.ServerAddress);
-	} else if(command === 'config'){
-		client.commands.get('config').execute(message, args, properties);
-	} else if(command === 'points'){
-		client.commands.get('points').execute(message, args, properties);
-	} else if(command === 'help'){
+	} else if (command === 'status') {
+		client.commands.get('status').execute(message, args);
+	} else if(command === 'config') {
+		client.commands.get('config').execute(message, args);
+	} else if(command === 'points') {
+		client.commands.get('points').execute(message, args);
+	} else if(command === 'help') {
 		client.commands.get('help').execute(message, args);
+	} else if(command === 'poll') {
+		client.commands.get('poll').execute(message, args);
 	} else {
 		message.reply('Unknown command. Check your spelling/syntax.')
 	}
