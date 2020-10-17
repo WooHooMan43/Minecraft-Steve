@@ -1,9 +1,13 @@
+const Discord = require('discord.js');
+
 module.exports = {
 	name: 'help',
 	description: "this is a help command!",
 	execute(message, args){
 		if (args.length == 0) {
-			message.reply('Commands:\n' + '- !help: Displays the help menu.\n' + '- !status: Displays the status of the Minecraft server.\n' + '- !points (help/user/add/remove/reset): Get help or view or modify your or someone else\'s points.\n' + '- !config (help/server/adminroles/userexceptions): Get help or modify the config.')
+			const embed = new Discord.MessageEmbed().setColor(0x883C88).setTitle('Help').addFields({name: '!help', value: 'Displays the help menu.', inline: true},{name: '!status', value: 'Displays the status of the Minecraft server.', inline: true},{name: '!points [help/user/add/remove/reset]', value: 'Get help or view or modify your or someone else\'s points.', inline: true},{name: '!config [help/server/adminroles/userexceptions]', value: 'Get help or modify the config.', inline: true});
+			message.reply(embed);
+			message.delete({timeout: 50}).catch(console.error);
 		}
 	}
 }

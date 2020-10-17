@@ -1,21 +1,41 @@
-const ServerStatus = require('minecraft-server-status');
+const Discord = require('discord.js');
+
+const fs = require('fs');
+
+const ServerUtils = require('minecraft-server-util');
+
+const base64ToImage = require('base64-to-image');
+
+const parser = require('minecraft-motd-parser');
 
 module.exports = {
 	name: 'status',
 	description: "gives the status of the selected minecraft server!",
-	execute(message, args, address){
-		ServerStatus(address, 25565, response => {
-			var messageStr = '\n'
-			messageStr = messageStr + 'Server Address: ' + address + '\n';
-			messageStr = messageStr + 'Status: ';
-			if(response.online == true){
-				messageStr = messageStr + 'Online:green_circle:' + '\n';
-				messageStr = messageStr + 'Version: ' + response.server.name.split(" ").splice(-1) + '\n';
-				messageStr = messageStr + 'Players: ' + response.players.now + '/' + response.players.max;
-			} else {
-				messageStr = messageStr + 'Offline:red_circle:';
-			};
-			message.reply(messageStr);
-		});
+	execute(message, args){
+		let propertiesraw = fs.readFileSync(`./guilds/${message.guild.id}/configuration.json`);
+		var properties = JSON.parse(propertiesraw);
+		ServerUtils.status(properties.ServerAddress)
+    	.then((response) => {
+			fs.mkdirSync(`guilds/${message.guild.id}/server-icons`, {recursive: true});			
+			if (!(isNaN(response.onlinePlayers))) {
+				var motd = '';
+				parser.parse(response.description.descriptionText, function(err, result) {
+					result.forEach(element => {
+						motd += element.string;
+					});
+				});
+				let serverIcon = base64ToImage(response.favicon, `guilds/${message.guild.id}/server-icons/`, {'fileName': 'server-icon', 'type':'png'});
+				const attachment = new Discord.MessageAttachment(`guilds/${message.guild.id}/server-icons/${serverIcon.fileName}`, serverIcon.fileName);
+				const embed = new Discord.MessageEmbed().setTitle(properties.ServerAddress).setColor(0x28A745).setDescription(motd).addFields({name: 'Version', value: response.version, inline: true},{name: 'Players', value: `${response.onlinePlayers}/${response.maxPlayers}`, inline: true}).attachFiles(attachment).setThumbnail(`attachment://${serverIcon.fileName}`);
+				message.reply(embed);
+				message.delete({timeout: 50}).catch(console.error);
+			}
+    	})
+    	.catch((error) => {
+			const embed = new Discord.MessageEmbed().setTitle(properties.ServerAddress).setColor(0xDC3545).addFields({name: 'Error', value: 'Sorry, but I can\'t find any information on this server. It might be offline.', inline: true});
+			message.reply(embed);
+			message.delete({timeout: 50}).catch(console.error);
+			throw error;
+    	});
 	}
 }
