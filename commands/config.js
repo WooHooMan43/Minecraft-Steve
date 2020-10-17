@@ -1,3 +1,5 @@
+const Discord = require('discord.js');
+
 const fs = require("fs");
 
 module.exports = {
@@ -11,20 +13,30 @@ module.exports = {
 			if (!configUsed) {
 				if (message.member.roles.cache.has(role.id) && properties.AdminRoles.includes(role.name)) {
 					if (args[0] === "help") {
-						message.reply("Config Help:\n" + "-config server: Changes server to use !status on.\n" + "-config adminroles (add/delete/list) (name): Change which roles have permission to edit the config.\n" + "-config userexceptions (add/delete/list) (name): Change which users have permission to edit the config.\n");
+						const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription('Help').addFields({name: '!config help', value: 'Displays the config help menu.', inline: true},{name: '!config adminroles <add/delete/list> <name>', value: 'Change which roles have permission to edit the config.', inline: true},{name: '!config userexceptions <add/delete/list> <@user>', value: 'Change which users have permission to edit the config.', inline: true},{name: '!config server <address>', value: 'Changes the server which !status acquires data from.', inline: true});
+						message.reply(embed);
+						message.delete({timeout: 50}).catch(console.error);
 					} else if (args[0] === "server") {
 						properties.ServerAddress = args[1];
-						message.reply("Server set to '" + args[1] + "'.");
+						const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription(`Server set to '${args[1]}'.`);
+						message.reply(embed);
+						message.delete({timeout: 50}).catch(console.error);
 					} else if (args[0] === "adminroles") {
 						if (args[1] === "add") {
 							properties.AdminRoles.push(args[2]);
-							message.reply("Added '" + args[2] + "' to administrative roles.");
+							const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription(`Added '${args[2]}' to administrative roles.`);
+							message.reply(embed);
+							message.delete({timeout: 50}).catch(console.error);
 						} else if (args[1] === "delete") {
 							if (args[2] in properties.AdminRoles) {
 								properties.AdminRoles.pop(args[2]);
-								message.reply("Removed '" + args[2] + "' from administrative roles.");
+								const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription(`Removed '${args[2]}' from administrative roles.`);
+								message.reply(embed);
+								message.delete({timeout: 50}).catch(console.error);
 							} else {
-								message.reply("Role '" + args[2] + "' is not an administrative role.");
+								const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription(`Role '${args[2]}' is not an administrative role.`);
+								message.reply(embed);
+								message.delete({timeout: 50}).catch(console.error);
 							}
 						} else if (args[1] === "list") {
 							if (properties.AdminRoles.length > 0) {
@@ -39,30 +51,40 @@ module.exports = {
 							} else {
 								var AdminRolesStr = "There are no roles with permissions to edit the config."
 							}
-							message.reply(AdminRolesStr);
+							const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription(AdminRolesStr);
+							message.reply(embed);
+							message.delete({timeout: 50}).catch(console.error);
 						} else {
-							message.reply("Unknown command. Check your spelling/syntax.");
+							const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription("Unknown command. Check your spelling/syntax.");
+							message.reply(embed);
+							message.delete({timeout: 50}).catch(console.error);
 						}
 					} else if (args[0] === "userexceptions") {
 						if (args[1] === "add") {
-							message.guild.members.cache.forEach(member => {
-								if (member.user.tag === args[2]) {
-									properties.UserExceptions.push(member.user.id);
-									message.reply("Added user '" + member.user.tag + "' as an exception.");
+							message.guild.members.cache.forEach(user => {
+								if (user.user.id === args[2].substring(2,args[2].length-1) && !user.user.bot) {
+									properties.UserExceptions.push(user.user.id);
+									const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription(`Added user '${user.user.tag}' as an exception.`);
+									message.reply(embed);
+									message.delete({timeout: 50}).catch(console.error);
 								}
 							});
 						} else if (args[1] === "delete") {
 							var UserExceptionsOldLen = properties.UserExceptions.length
-							message.guild.members.cache.forEach(member => {
-								if (member.user.tag === args[2]) {
-									if (properties.UserExceptions.includes(member.user.id)) {
-										properties.UserExceptions.pop(member.user.id);
-										message.reply("Removed user '" + member.user.tag + "' as an exception.");
+							message.guild.members.cache.forEach(user => {
+								if (user.user.id === args[2].substring(2,args[2].length-1) && !user.user.bot) {
+									if (properties.UserExceptions.includes(user.user.id)) {
+										properties.UserExceptions.pop(user.user.id);
+										const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription(`Removed user '${user.user.tag}' as an exception.`);
+										message.reply(embed);
+										message.delete({timeout: 50}).catch(console.error);
 									}
 								}
 							});
 							if (UserExceptionsOldLen === properties.UserExceptions.length) {
-								message.reply("User '" + args[2] + "' is not an exception.");
+								const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription(`User '${args[2]}' is not an exception.`);
+								message.reply(embed);
+								message.delete({timeout: 50}).catch(console.error);
 							}
 						} else if (args[1] === "list") {
 							if (properties.UserExceptions.length > 0) {
@@ -81,10 +103,14 @@ module.exports = {
 							} else {
 							var UserExceptionsStr = "There are no users with permissions to edit the config.";
 							}
-						message.reply(UserExceptionsStr);
+						const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription(UserExceptionsStr);
+						message.reply(embed);
+						message.delete({timeout: 50}).catch(console.error);
 						}
 					} else {
-							message.reply("Unknown command. Check your spelling/syntax. arg ");
+						const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription("Unknown command. Check your spelling/syntax. arg ");
+						message.reply(embed);
+						message.delete({timeout: 50}).catch(console.error);
 					};
 					configUsed = true
 				}
@@ -94,20 +120,30 @@ module.exports = {
 			if (!configUsed) {
 				if (properties.UserExceptions.includes(member.user.id)) {
 					if (args[0] === "help") {
-						message.reply("Config Help:\n" + "-config server: Changes server to use !status on.\n" + "-config adminroles (add/delete/list) (name): Change which roles have permission to edit the config.\n" + "-config userexceptions (add/delete/list) (name): Change which users have permission to edit the config.\n");
+						const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription('Help').addFields({name: '!config help', value: 'Displays the config help menu.', inline: true},{name: '!config adminroles <add/delete/list> <name>', value: 'Change which roles have permission to edit the config.', inline: true},{name: '!config userexceptions <add/delete/list> <@user>', value: 'Change which users have permission to edit the config.', inline: true},{name: '!config server <address>', value: 'Changes the server which !status acquires data from.', inline: true});
+						message.reply(embed);
+						message.delete({timeout: 50}).catch(console.error);
 					} else if (args[0] === "server") {
 						properties.ServerAddress = args[1];
-						message.reply("Server set to '" + args[1] + "'.");
+						const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription(`Server set to '${args[1]}'.`);
+						message.reply(embed);
+						message.delete({timeout: 50}).catch(console.error);
 					} else if (args[0] === "adminroles") {
 						if (args[1] === "add") {
 							properties.AdminRoles.push(args[2]);
-							message.reply("Added '" + args[2] + "' to administrative roles.");
+							const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription(`Added '${args[2]}' to administrative roles.`);
+							message.reply(embed);
+							message.delete({timeout: 50}).catch(console.error);
 						} else if (args[1] === "delete") {
 							if (args[2] in properties.AdminRoles) {
 								properties.AdminRoles.pop(args[2]);
-								message.reply("Removed '" + args[2] + "' from administrative roles.");
+								const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription(`Removed '${args[2]}' from administrative roles.`);
+								message.reply(embed);
+								message.delete({timeout: 50}).catch(console.error);
 							} else {
-								message.reply("Role '" + args[2] + "' is not an administrative role.");
+								const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription(`Role '${args[2]}' is not an administrative role.`);
+								message.reply(embed);
+								message.delete({timeout: 50}).catch(console.error);
 							}
 						} else if (args[1] === "list") {
 							if (properties.AdminRoles.length > 0) {
@@ -122,30 +158,40 @@ module.exports = {
 							} else {
 								var AdminRolesStr = "There are no roles with permissions to edit the config."
 							}
-							message.reply(AdminRolesStr);
+							const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription(AdminRolesStr);
+							message.reply(embed);
+							message.delete({timeout: 50}).catch(console.error);
 						} else {
-							message.reply("Unknown command. Check your spelling/syntax.");
+							const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription("Unknown command. Check your spelling/syntax.");
+							message.reply(embed);
+							message.delete({timeout: 50}).catch(console.error);
 						}
 					} else if (args[0] === "userexceptions") {
 						if (args[1] === "add") {
-							message.guild.members.cache.forEach(member => {
-								if (member.user.tag === args[2]) {
-									properties.UserExceptions.push(member.user.id);
-									message.reply("Added user '" + member.user.tag + "' as an exception.");
+							message.guild.members.cache.forEach(user => {
+								if (user.user.id === args[2].substring(2,args[2].length-1) && !user.user.bot) {
+									properties.UserExceptions.push(user.user.id);
+									const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription(`Added user '${user.user.tag}' as an exception.`);
+									message.reply(embed);
+									message.delete({timeout: 50}).catch(console.error);
 								}
 							});
 						} else if (args[1] === "delete") {
 							var UserExceptionsOldLen = properties.UserExceptions.length
-							message.guild.members.cache.forEach(member => {
-								if (member.user.tag === args[2]) {
-									if (properties.UserExceptions.includes(member.user.id)) {
-										properties.UserExceptions.pop(member.user.id);
-										message.reply("Removed user '" + member.user.tag + "' as an exception.");
+							message.guild.members.cache.forEach(user => {
+								if (user.user.id === args[2].substring(2,args[2].length-1) && !user.user.bot) {
+									if (properties.UserExceptions.includes(user.user.id)) {
+										properties.UserExceptions.pop(user.user.id);
+										const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription(`Removed user '${user.user.tag}' as an exception.`);
+										message.reply(embed);
+										message.delete({timeout: 50}).catch(console.error);
 									}
 								}
 							});
 							if (UserExceptionsOldLen === properties.UserExceptions.length) {
-								message.reply("User '" + args[2] + "' is not an exception.");
+								const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription(`User '${args[2]}' is not an exception.`);
+								message.reply(embed);
+								message.delete({timeout: 50}).catch(console.error);
 							}
 						} else if (args[1] === "list") {
 							if (properties.UserExceptions.length > 0) {
@@ -164,17 +210,23 @@ module.exports = {
 							} else {
 							var UserExceptionsStr = "There are no users with permissions to edit the config.";
 							}
-						message.reply(UserExceptionsStr);
+						const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription(UserExceptionsStr);
+						message.reply(embed);
+						message.delete({timeout: 50}).catch(console.error);
 						}
 					} else {
-							message.reply("Unknown command. Check your spelling/syntax. arg ");
+						const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription("Unknown command. Check your spelling/syntax. arg ");
+						message.reply(embed);
+						message.delete({timeout: 50}).catch(console.error);
 					};
 					configUsed = true
 				}
 			}
 		});
 		if (!configUsed) {
-			message.reply("You do not have permission to use this command.");
+			const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription("You do not have permission to use this command.");
+			message.reply(embed);
+			message.delete({timeout: 50}).catch(console.error);
 		};
 		let saveSettings = {
 			"ServerAddress" : properties.ServerAddress,

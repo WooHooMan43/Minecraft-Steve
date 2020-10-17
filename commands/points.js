@@ -31,48 +31,63 @@ module.exports = {
 									message.guild.members.cache.forEach(user => {
 										if (user.user.id === args[2].substring(2,args[2].length-1) && !user.user.bot) {
 											serverpoints[user.user.id] += parseInt(args[1]);
-											message.reply(`Added ${args[1]} points to ${user.user.tag}. Total: ${serverpoints[user.user.id]}`);
+											const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points').setDescription(`Added ${args[1]} points to ${user.user.tag}.`).addField('Total', serverpoints[user.user.id], true);
+											message.reply(embed);
+											message.delete({timeout: 50}).catch(console.error);
 											foundUser = true;
 										}
 									});
 									if (args.length <= 2) {
 										serverpoints[message.author.id] += parseInt(args[1]);
-										message.reply(`Added ${args[1]} to your points. Total: ${serverpoints[message.author.id]}`);
+										const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points').setDescription(`Added ${args[1]} to your points.`).addField('Total', serverpoints[message.author.id], true);
+										message.reply(embed);
+											message.delete({timeout: 50}).catch(console.error);
 									}
 								} else if (args[0] === 'remove') {
 									message.guild.members.cache.forEach(user => {
 										if (user.user.id === args[2].substring(2,args[2].length-1) && !user.user.bot) {
 											serverpoints[user.user.id] -= parseInt(args[1]);
-											message.reply(`Removed ${args[1]} points from ${user.user.tag}. Total: ${serverpoints[user.user.id]}`);
+											const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points').setDescription(`Removed ${args[1]} points from ${user.user.tag}.`).addField('Total', serverpoints[user.user.id], true);
+											message.reply(embed);
+											message.delete({timeout: 50}).catch(console.error);
 											foundUser = true;
 										}
 									});
 									if (args.length <= 2) {
 										serverpoints[message.author.id] -= parseInt(args[1]);
-										message.reply(`Removed ${args[1]} of your points. Total: ${serverpoints[message.author.id]}`);
+										const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points').setDescription(`Removed ${args[1]} from your points.`).addField('Total', serverpoints[message.author.id], true);
+										message.reply(embed);
+											message.delete({timeout: 50}).catch(console.error);
 									}
 								} else if (args[0] === 'reset') {
 									message.guild.members.cache.forEach(user => {
 										if (user.user.id === args[1].substring(2,args[1].length-1) && !user.user.bot) {
 											serverpoints[user.user.id] = 0;
-											message.reply(`Reset ${user.user.tag}'s points.`);
+											const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points').setDescription(`Reset ${user.user.tag} to 0 points.`);
+											message.reply(embed);
+											message.delete({timeout: 50}).catch(console.error);
 											foundUser = true;
 										}
 									});
 									if (args.length == 1) {
 										serverpoints[message.author.id] = 0;
-										message.reply('Reset your points.');
-									}
+										const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points').setDescription(`Reset your points.`);
+										message.reply(embed);
+											message.delete({timeout: 50}).catch(console.error);
+								}
 								} else if (args[0] === 'user') {
 									message.guild.members.cache.forEach(user => {
 										if (user.user.id === args[1].substring(2,args[1].length-1) && !user.user.bot) {
-											message.reply(`${user.user.tag} has ${(user.user.id in serverpoints) ? serverpoints[user.user.id] : 0} points.`);
+											const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points').setDescription(`${user.user.tag} has ${(user.user.id in serverpoints) ? serverpoints[user.user.id] : 0} points.`);
+											message.reply(embed);
+											message.delete({timeout: 50}).catch(console.error);
 											foundUser = true;
 										}
 									})
 								};
 								if (!foundUser) {
-									message.reply('Unknown user/command: check your spelling/syntax.')
+									const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points').setDescription('Unknown user/command: check your spelling/syntax.');
+									message.reply(embed)
 								};
 								pointsUsed = true
 							}
@@ -86,55 +101,71 @@ module.exports = {
 									message.guild.members.cache.forEach(user => {
 										if (user.user.id === args[2].substring(2,args[2].length-1) && !user.user.bot) {
 											serverpoints[user.user.id] += parseInt(args[1]);
-											message.reply(`Added ${args[1]} points to ${user.user.tag}. Total: ${serverpoints[user.user.id]}`);
+											const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points').setDescription(`Added ${args[1]} points to ${user.user.tag}.`).addField('Total', serverpoints[user.user.id], true);
+											message.reply(embed);
+											message.delete({timeout: 50}).catch(console.error);
 											foundUser = true;
 										}
 									});
 									if (args.length <= 2) {
 										serverpoints[message.author.id] += parseInt(args[1]);
-										message.reply(`Added ${args[1]} to your points. Total: ${serverpoints[message.author.id]}`);
+										const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points').setDescription(`Added ${args[1]} to your points.`).addField('Total', serverpoints[message.author.id], true);
+										message.reply(embed);
+											message.delete({timeout: 50}).catch(console.error);
 									}
 								} else if (args[0] === 'remove') {
 									message.guild.members.cache.forEach(user => {
 										if (user.user.id === args[2].substring(2,args[2].length-1) && !user.user.bot) {
 											serverpoints[user.user.id] -= parseInt(args[1]);
-											message.reply(`Removed ${args[1]} points from ${user.user.tag}. Total: ${serverpoints[user.user.id]}`);
+											const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points').setDescription(`Removed ${args[1]} points from ${user.user.tag}.`).addField('Total', serverpoints[user.user.id], true);
+											message.reply(embed);
+											message.delete({timeout: 50}).catch(console.error);
 											foundUser = true;
 										}
 									});
 									if (args.length <= 2) {
 										serverpoints[message.author.id] -= parseInt(args[1]);
-										message.reply(`Removed ${args[1]} of your points. Total: ${serverpoints[message.author.id]}`);
+										const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points').setDescription(`Removed ${args[1]} from your points.`).addField('Total', serverpoints[message.author.id], true);
+										message.reply(embed);
+											message.delete({timeout: 50}).catch(console.error);
 									}
 								} else if (args[0] === 'reset') {
 									message.guild.members.cache.forEach(user => {
 										if (user.user.id === args[1].substring(2,args[1].length-1) && !user.user.bot) {
 											serverpoints[user.user.id] = 0;
-											message.reply(`Reset ${user.user.tag}'s points.`);
+											const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points').setDescription(`Reset ${user.user.tag} to 0 points.`);
+											message.reply(embed);
+											message.delete({timeout: 50}).catch(console.error);
 											foundUser = true;
 										}
 									});
 									if (args.length == 1) {
 										serverpoints[message.author.id] = 0;
-										message.reply('Reset your points.');
-									}
+										const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points').setDescription(`Reset your points.`);
+										message.reply(embed);
+											message.delete({timeout: 50}).catch(console.error);
+								}
 								} else if (args[0] === 'user') {
 									message.guild.members.cache.forEach(user => {
 										if (user.user.id === args[1].substring(2,args[1].length-1) && !user.user.bot) {
-											message.reply(`${user.user.tag} has ${(user.user.id in serverpoints) ? serverpoints[user.user.id] : 0} points.`);
+											const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points').setDescription(`${user.user.tag} has ${(user.user.id in serverpoints) ? serverpoints[user.user.id] : 0} points.`);
+											message.reply(embed);
+											message.delete({timeout: 50}).catch(console.error);
 											foundUser = true;
 										}
 									})
 								};
 								if (!foundUser) {
-									message.reply('Unknown user/command: check your spelling/syntax.')
+									const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points').setDescription('Unknown user/command: check your spelling/syntax.');
+									message.reply(embed)
 								};
 								pointsUsed = true
 							}
 						}
 					});
 					if (!pointsUsed) {
-						message.reply('You do not have permission to use this command.')
+						const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points').setDescription('You do not have permission to use this command.');
+						message.reply(embed)
 					}
 				}
 			};
