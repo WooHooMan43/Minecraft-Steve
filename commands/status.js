@@ -28,13 +28,11 @@ module.exports = {
 				const attachment = new Discord.MessageAttachment(`guilds/${message.guild.id}/server-icons/${serverIcon.fileName}`, serverIcon.fileName);
 				const embed = new Discord.MessageEmbed().setTitle(properties.ServerAddress).setColor(0x28A745).setDescription(motd).addFields({name: 'Version', value: response.version, inline: true},{name: 'Players', value: `${response.onlinePlayers}/${response.maxPlayers}`, inline: true}).attachFiles(attachment).setThumbnail(`attachment://${serverIcon.fileName}`);
 				message.reply(embed);
-				message.delete({timeout: 50}).catch(console.error);
 			}
     	})
     	.catch((error) => {
 			const embed = new Discord.MessageEmbed().setTitle(properties.ServerAddress).setColor(0xDC3545).addFields({name: 'Error', value: 'Sorry, but I can\'t find any information on this server. It might be offline.', inline: true});
 			message.reply(embed);
-			message.delete({timeout: 50}).catch(console.error);
 			throw error;
     	});
 	}
