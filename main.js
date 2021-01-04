@@ -59,8 +59,7 @@ client.once('ready', () => {
 
 		if (!fs.existsSync(`guilds/${guild.id}/banned_words.json`)) {
 			let banned_words_dict = {
-				'words': [],
-				'replacements': []
+				'words': ["fag","retard","nigger","nigga","niger","nibba","niga","nibber","niber","whore"],
 			};
 			fs.writeFileSync(`guilds/${guild.id}/banned_words.json`, JSON.stringify(banned_words_dict), {flag: 'w'}, function(err, result) {
 				if(err) console.log('error', err);
@@ -91,16 +90,16 @@ client.on('message', message => {
 		let banned_words = JSON.parse(banned_words_raw)
 
 		banned_words.words.forEach(word => {
-			if (message.content.includes(word)) {
-				message.content.replaceAll(word, banned_words.replacements.indexOf(banned_words.words.indexOf(word)))
-			} else {
-				if (message.author.id in points) {
-					points[message.author.id] += 5
-				} else {
-					points[message.author.id] = 5
-				}
+			let user_message = message.content.split(' ').join('').toLowerCase();
+			if (user_message.includes(word)) {
+				message.delete().then(msg => console.log(`Deleted ${msg.author.username}#${msg.author.discriminator}'s message in '${msg.guild.name}' containing '${word}'.`))
 			}
 		});
+		if (message.author.id in points) {
+			points[message.author.id] += 5
+		} else {
+			points[message.author.id] = 5
+		}
 
 		save_points = JSON.stringify(points);
 		fs.writeFileSync(`guilds/${message.guild.id}/points.json`, save_points, function(err, result) {
