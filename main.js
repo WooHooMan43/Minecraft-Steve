@@ -87,7 +87,7 @@ client.on('message', message => {
 		let points_raw = fs.readFileSync(`guilds/${message.guild.id}/points.json`)
 		points = JSON.parse(points_raw);
 
-		let banned_words_raw = fs.readFileSync(`guilds/${guild.id}/banned_words.json`);
+		let banned_words_raw = fs.readFileSync(`guilds/${message.guild.id}/banned_words.json`);
 		let banned_words = JSON.parse(banned_words_raw)
 
 		banned_words.words.forEach(word => {
