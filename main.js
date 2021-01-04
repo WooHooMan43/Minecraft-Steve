@@ -33,13 +33,13 @@ client.once('ready', () => {
 		
 		var default_properties = {ServerAddress:'woohoocraft.hopto.org', AdminRoles:["Admin","Administrator","Owner","Supreme Councilmen"], UserExceptions:[]};
 		if (!fs.existsSync(`guilds/${guild.id}/configuration.json`)) {
-			fs.writeFileSync(`guilds/${guild.id}/configuration.json`, JSON.stringify(default_properties), {flag: 'w'}, function(err, result) {
+			fs.writeFileSync(`guilds/${guild.id}/configuration.json`, JSON.stringify(properties), {flag: 'w'}, function(err, result) {
 				if(err) console.log('error', err);
 			})
 		};
 		var properties_raw = fs.readFileSync(`guilds/${guild.id}/configuration.json`);
 		if (properties_raw == 'undefined') {
-			fs.writeFileSync(`guilds/${guild.id}/configuration.json`, JSON.stringify(default_properties), {flag: 'w'}, function(err, result) {
+			fs.writeFileSync(`guilds/${guild.id}/configuration.json`, JSON.stringify(properties), {flag: 'w'}, function(err, result) {
 				if(err) console.log('error', err);
 			})
 		};
