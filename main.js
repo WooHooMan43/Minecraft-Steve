@@ -37,16 +37,9 @@ client.once('ready', () => {
 		let userpoints_raw = fs.readFileSync(`guilds/${guild.id}/points.json`);
 		let userpoints = JSON.parse(userpoints_raw);
 		
-		let default_properties = {ServerAddress:'woohoocraft.hopto.org', AdminRoles:["Admin","Administrator","Owner","Supreme Councilmen"], UserExceptions:[], PointsIncrement:5};
+		let default_properties = {ServerAddress:'woohoocraft.hopto.org', AdminRoles:["Admin","Administrator","Owner","Supreme Councilmen"], UserExceptions:[], PointsIncrement:5, BannedWords:["fag","retard","nigger","nigga","niger","nibba","niga","nibber","niber","whore"]};
 		if (!fs.existsSync(`guilds/${guild.id}/configuration.json`)) {
 			fs.writeFileSync(`guilds/${guild.id}/configuration.json`, JSON.stringify(default_properties), {flag: 'w'}, function(err, result) {
-				if(err) console.log('error', err);
-			})
-		};
-
-		let banned_words = {'words': ["fag","retard","nigger","nigga","niger","nibba","niga","nibber","niber","whore"]};
-		if (!fs.existsSync(`guilds/${guild.id}/banned_words.json`)) {
-			fs.writeFileSync(`guilds/${guild.id}/banned_words.json`, JSON.stringify(banned_words), {flag: 'w'}, function(err, result) {
 				if(err) console.log('error', err);
 			})
 		};
@@ -63,22 +56,21 @@ client.once('ready', () => {
 				})
 			}
 		})
-	})
+	});
+	console.log('Steve is online!')
 })
 
 client.on('message', message => {
-	if(!message.content.startsWith(prefix) || message.author.bot) {
+	if(!message.content.startsWith(prefix) && !message.author.bot) {
 		let points_raw = fs.readFileSync(`guilds/${message.guild.id}/points.json`)
 		let points = JSON.parse(points_raw);
 
-		let properties_raw = fs.readFileSync(`guilds/${guild.id}/configuration.json`);
+		let properties_raw = fs.readFileSync(`guilds/${message.guild.id}/configuration.json`);
 		let properties = JSON.parse(properties_raw);
 		let points_increment = properties.PointsIncrement
+		let banned_words = properties.BannedWords
 
-		let banned_words_raw = fs.readFileSync(`guilds/${message.guild.id}/banned_words.json`);
-		let banned_words = JSON.parse(banned_words_raw)
-
-		banned_words.words.forEach(word => {
+		banned_words.forEach(word => {
 			let user_message = message.content.split(' ').join('').toLowerCase();
 			if (user_message.includes(word)) {
 				message.delete().then(msg => console.log(`Deleted ${msg.author.tag}'s message in '${msg.guild.name}' containing '${word}'.`))
@@ -96,7 +88,10 @@ client.on('message', message => {
 		});
 		return
 	};
-
+	if(!message.content.startsWith(prefix) || message.author.bot) {
+		return
+	};
+	
 	const args = message.content.slice(prefix.length).split(/ +/);
 	const command = args.shift().toLowerCase();
 
