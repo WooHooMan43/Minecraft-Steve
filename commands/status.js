@@ -24,6 +24,7 @@ module.exports = {
 						motd += element.string;
 					});
 				});
+				motd.split('Â').join('');
 				let serverIcon = base64ToImage(response.favicon, `guilds/${message.guild.id}/server-icons/`, {'fileName': 'server-icon', 'type':'png'});
 				const attachment = new Discord.MessageAttachment(`guilds/${message.guild.id}/server-icons/${serverIcon.fileName}`, serverIcon.fileName);
 				const embed = new Discord.MessageEmbed().setTitle(properties.ServerAddress).setColor(0x28A745).setDescription(motd).addFields({name: 'Version', value: response.version, inline: true},{name: 'Players', value: `${response.onlinePlayers}/${response.maxPlayers}`, inline: true}).attachFiles(attachment).setThumbnail(`attachment://${serverIcon.fileName}`);
