@@ -69,7 +69,7 @@ module.exports = {
 								}
 								} else if (args[0] === 'user') {
 									message.guild.members.cache.forEach(user => {
-										if (user.user.id === args[1].substring(2,args[1].length-1) && !user.user.bot) {
+										if (args[1] != undefined && user.user.id === args[1].replace(/[<@!>]/g, '')  && !user.user.bot) {
 											const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points').setDescription(`${user.user.tag} has ${(user.user.id in serverpoints) ? serverpoints[user.user.id] : 0} points.`);
 											message.reply(embed);
 											foundUser = true;

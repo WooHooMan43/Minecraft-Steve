@@ -44,7 +44,7 @@ function useConfig(message, args, properties) {
 	} else if (args[0] === "userexceptions") {
 		if (args[1] === "add") {
 			message.guild.members.cache.forEach(user => {
-				if (user.user.id === args[2].substring(2,args[2].length-1) && !user.user.bot && !properties.UserExceptions.includes(user.user.id)) {
+				if (user.user.id === args[2].replace(/[<@!>]/g, '') && !user.user.bot && !properties.UserExceptions.includes(user.user.id)) {
 					properties.UserExceptions.push(user.user.id);
 					message.reply(embed.setDescription(`Added user '${user.user.tag}' as an exception.`));
 				} else {
@@ -54,7 +54,7 @@ function useConfig(message, args, properties) {
 		} else if (args[1] === "delete") {
 			var UserExceptionsOldLen = properties.UserExceptions.length
 			message.guild.members.cache.forEach(user => {
-				if (user.user.id === args[2].substring(2,args[2].length-1) && !user.user.bot) {
+				if (user.user.id === args[2].replace(/[<@!>]/g, '') && !user.user.bot) {
 					if (properties.UserExceptions.includes(user.user.id)) {
 						properties.UserExceptions.splice(properties.UserExceptions.indexOf(user.user.id),1);
 						message.reply(embed.setDescription(`Removed user '${user.user.tag}' as an exception.`));
