@@ -12,11 +12,14 @@ module.exports = {
 	name: 'status',
 	description: "gives the status of the selected minecraft server!",
 	execute(message, args){
-		let propertiesraw = fs.readFileSync(`./guilds/${message.guild.id}/configuration.json`);
-		var properties = JSON.parse(propertiesraw);
+		if (fs.existsSync(`guilds/${message.guild.id}/configuration.json`)) {
+			let properties_raw = fs.readFileSync(`./guilds/${message.guild.id}/configuration.json`);
+			var properties = JSON.parse(properties_raw);
+		} else {
+			var properties = {ServerAddress:'play.woohoocraft.net', AdminRoles:["Admin","Administrator","Owner","Supreme Councilmen"], UserExceptions:[], PointsIncrement:5, BannedWords:["fag","retard","nigger","nigga","niger","nibba","niga","nibber","niber","whore"]};
+		};
 		ServerUtils.status(properties.ServerAddress)
     	.then((response) => {
-			fs.mkdirSync(`guilds/${message.guild.id}/server-icons`, {recursive: true});			
 			if (!(isNaN(response.onlinePlayers))) {
 				var motd = '';
 				parser.parse(response.description.descriptionText, function(err, result) {

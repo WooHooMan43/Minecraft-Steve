@@ -5,7 +5,7 @@ const fs = require("fs");
 function useConfig(message, args, properties) {
 	const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config')
 	if (args[0] === "help") {
-		message.reply(embed.setDescription('Help').addFields({name: '!config help', value: 'Displays the config help menu.', inline: true},{name: '!config adminroles <add/delete/list> <name>', value: 'Change which roles have permission to edit the config.', inline: true},{name: '!config userexceptions <add/delete/list> <@user>', value: 'Change which users have permission to edit the config.', inline: true},{name: '!config server <address>', value: 'Changes the server which !status acquires data from.', inline: true},{name: '!config bannedwords <add/delete> <word>', value: 'Change which words are banned from the server.', inline: true},{name: '!config increment <value>', value: 'Change the number of pounts given with each message.', inline: true},{name: '!config reset', value: 'Reset the configs.', inline: true}));
+		message.reply(embed.setDescription('Help').addFields({name: '!config adminroles [add/delete] [Name]', value: 'Change which roles have permission to edit the config.', inline: true},{name: '!config adminroles list', value: 'Show which roles have permission to edit the config.', inline: true},{name: '!config userexceptions [add/delete] [@User]', value: 'Change which users have permission to edit the config.', inline: true},{name: '!config userexceptions list', value: 'Show which users have permission to edit the config.', inline: true},{name: '!config server [Address]', value: 'Changes the server which !status acquires data from.', inline: true},{name: '!config bannedwords [add/delete] [Word]', value: 'Change which words are banned from the server.', inline: true},{name: '!config increment [Value]', value: 'Change the number of pounts given with each message.', inline: true},{name: '!config reset', value: 'Reset the configs.', inline: true}));
 	} else if (args[0] === "server") {
 		properties.ServerAddress = args[1];
 		message.reply(embed.setDescription(`Server set to '${args[1]}'.`));
@@ -109,7 +109,7 @@ function useConfig(message, args, properties) {
 			message.reply(embed.setDescription(`${args[1]} is not a number.`));
 		}
 	} else if (args[0] === "reset") {
-		properties = {ServerAddress:'woohoocraft.hopto.org', AdminRoles:["Admin","Administrator","Owner","Supreme Councilmen"], UserExceptions:[], PointsIncrement:5, BannedWords:["fag","retard","nigger","nigga","niger","nibba","niga","nibber","niber","whore"]};
+		properties = {ServerAddress:'play.woohoocraft.net', AdminRoles:["Admin","Administrator","Owner","Supreme Councilmen"], UserExceptions:[], PointsIncrement:5, BannedWords:["fag","retard","nigger","nigga","niger","nibba","niga","nibber","niber","whore"]};
 		message.reply(embed.setDescription(`Reset configuration and banned words.`));
 	} else {
 		message.reply(embed.setDescription("Unknown command. Check your spelling/syntax."));
@@ -125,7 +125,7 @@ module.exports = {
 			let properties_raw = fs.readFileSync(`./guilds/${message.guild.id}/configuration.json`);
 			var properties = JSON.parse(properties_raw);
 		} else {
-			var properties = {ServerAddress:'woohoocraft.hopto.org', AdminRoles:["Admin","Administrator","Owner","Supreme Councilmen"], UserExceptions:[], PointsIncrement:5, BannedWords:["fag","retard","nigger","nigga","niger","nibba","niga","nibber","niber","whore"]};
+			var properties = {ServerAddress:'play.woohoocraft.net', AdminRoles:["Admin","Administrator","Owner","Supreme Councilmen"], UserExceptions:[], PointsIncrement:5, BannedWords:["fag","retard","nigger","nigga","niger","nibba","niga","nibber","niber","whore"]};
 		};
 		var configUsed = false;
 		message.guild.roles.cache.forEach(role => {

@@ -37,7 +37,7 @@ client.once('ready', () => {
 		let userpoints_raw = fs.readFileSync(`guilds/${guild.id}/points.json`);
 		let userpoints = JSON.parse(userpoints_raw);
 		
-		let default_properties = {ServerAddress:'woohoocraft.hopto.org', AdminRoles:["Admin","Administrator","Owner","Supreme Councilmen"], UserExceptions:[], PointsIncrement:5, BannedWords:["fag","retard","nigger","nigga","niger","nibba","niga","nibber","niber","whore"]};
+		let default_properties = {ServerAddress:'play.woohoocraft.net', AdminRoles:["Admin","Administrator","Owner","Supreme Councilmen"], UserExceptions:[], PointsIncrement:5, BannedWords:["fag","retard","nigger","nigga","niger","nibba","niga","nibber","niber","whore"]};
 		if (!fs.existsSync(`guilds/${guild.id}/configuration.json`)) {
 			fs.writeFileSync(`guilds/${guild.id}/configuration.json`, JSON.stringify(default_properties), {flag: 'w'}, function(err, result) {
 				if(err) console.log('error', err);
@@ -61,7 +61,7 @@ client.once('ready', () => {
 })
 
 client.on('message', message => {
-	if(!message.content.startsWith(prefix) && !message.author.bot) {
+	if (!message.content.startsWith(prefix) && !message.author.bot) {
 		let points_raw = fs.readFileSync(`guilds/${message.guild.id}/points.json`)
 		let points = JSON.parse(points_raw);
 
@@ -71,7 +71,7 @@ client.on('message', message => {
 		let banned_words = properties.BannedWords
 
 		banned_words.forEach(word => {
-			let user_message = message.content.split(' ').join('').toLowerCase();
+			let user_message = message.content.replace(/[^a-zA-Z]/g, "").toLowerCase();
 			if (user_message.includes(word)) {
 				message.delete().then(msg => console.log(`Deleted ${msg.author.tag}'s message in '${msg.guild.name}' containing '${word}'.`))
 			}
@@ -88,7 +88,7 @@ client.on('message', message => {
 		});
 		return
 	};
-	if(!message.content.startsWith(prefix) || message.author.bot) {
+	if (!message.content.startsWith(prefix) || message.author.bot) {
 		return
 	};
 	
@@ -99,16 +99,29 @@ client.on('message', message => {
 		client.commands.get('ping').execute(message, args);
 	} else if (command === 'status') {
 		client.commands.get('status').execute(message, args);
-	} else if(command === 'config') {
+	} else if (command === 'config') {
 		client.commands.get('config').execute(message, args);
-	} else if(command === 'points') {
+	} else if (command === 'points') {
 		client.commands.get('points').execute(message, args);
-	} else if(command === 'help') {
+	} else if (command === 'help') {
 		client.commands.get('help').execute(message, args);
-	} else if(command === 'poll') {
+	} else if (command === 'poll') {
 		client.commands.get('poll').execute(message, args);
+	} else if (command === 'nick') {
+		client.commands.get('nick').execute(message, args);
+	} else if (command === 'clearchat') {
+		client.commands.get('clearchat').execute(message, args);
+	} else if (command === 'ban') {
+		client.commands.get('ban').execute(message, args);
+	} else if (command === 'unban') {
+		client.commands.get('unban').execute(message, args);
+	} else if (command === 'kick') {
+		client.commands.get('kick').execute(message, args);
+	} else if (command === 'adminhelp') {
+		client.commands.get('adminhelp').execute(message, args);
 	} else {
-		message.reply('Unknown command. Check your spelling/syntax.')
+		const embed = new Discord.MessageEmbed().setColor(0x0FF00).setTitle('Unknown Command').setDescription(`'${message}' is an unknown command. Check your spelling/syntax.`);
+		message.reply(embed)
 	}
 });
 
