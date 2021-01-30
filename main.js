@@ -15,6 +15,39 @@ for(const file of commandFiles){
 	client.commands.set(command.name, command)
 };
 
+function initializeGuild(guild) {
+	fs.mkdirSync(`guilds/${guild.id}`, {recursive: true});
+
+	if (!fs.existsSync(`guilds/${guild.id}/points.json`)) {
+		fs.writeFileSync(`guilds/${guild.id}/points.json`, '{}', {flag: 'w'}, function(err, result) {
+			if(err) console.log('error', err);
+		})
+	};
+
+	let userpoints_raw = fs.readFileSync(`guilds/${guild.id}/points.json`);
+	let userpoints = JSON.parse(userpoints_raw);
+	
+	let default_properties = {ServerAddress:'play.woohoocraft.net', AdminRoles:["Admin","Administrator","Owner","Supreme Councilmen"], UserExceptions:[], PointsIncrement:5, BannedWords:["fag","retard","nigger","nigga","niger","nibba","niga","nibber","niber","whore"]};
+	if (!fs.existsSync(`guilds/${guild.id}/configuration.json`)) {
+		fs.writeFileSync(`guilds/${guild.id}/configuration.json`, JSON.stringify(default_properties), {flag: 'w'}, function(err, result) {
+			if(err) console.log('error', err);
+		})
+	};
+
+	guild.members.cache.forEach(member => {
+		if (member.user.id !== client.user.id && !member.user.bot) {
+			if (!(member.user.id in userpoints)) {
+				userpoints[member.user.id] = 0;
+			}				
+		}
+	});
+
+	let userpoints_new = JSON.stringify(userpoints);
+			fs.writeFileSync(`guilds/${guild.id}/points.json`, userpoints_new, function(err, result) {
+				if(err) console.log('error', err);
+			})
+}
+
 client.once('ready', () => {
 
 	client.user.setPresence({
@@ -26,38 +59,14 @@ client.once('ready', () => {
 
 	fs.mkdirSync('guilds', {recursive: true});
 	client.guilds.cache.forEach(guild => {
-		fs.mkdirSync(`guilds/${guild.id}`, {recursive: true});
-
-		if (!fs.existsSync(`guilds/${guild.id}/points.json`)) {
-			fs.writeFileSync(`guilds/${guild.id}/points.json`, '{}', {flag: 'w'}, function(err, result) {
-				if(err) console.log('error', err);
-			})
-		};
-
-		let userpoints_raw = fs.readFileSync(`guilds/${guild.id}/points.json`);
-		let userpoints = JSON.parse(userpoints_raw);
-		
-		let default_properties = {ServerAddress:'play.woohoocraft.net', AdminRoles:["Admin","Administrator","Owner","Supreme Councilmen"], UserExceptions:[], PointsIncrement:5, BannedWords:["fag","retard","nigger","nigga","niger","nibba","niga","nibber","niber","whore"]};
-		if (!fs.existsSync(`guilds/${guild.id}/configuration.json`)) {
-			fs.writeFileSync(`guilds/${guild.id}/configuration.json`, JSON.stringify(default_properties), {flag: 'w'}, function(err, result) {
-				if(err) console.log('error', err);
-			})
-		};
-
-		guild.members.cache.forEach(member => {
-			if (member.user.id !== client.user.id && !member.user.bot) {
-				if (!(member.user.id in userpoints)) {
-					userpoints[member.user.id] = 0;
-				};
-
-				let userpoints_new = JSON.stringify(userpoints);
-				fs.writeFileSync(`guilds/${guild.id}/points.json`, userpoints_new, function(err, result) {
-					if(err) console.log('error', err);
-				})
-			}
-		})
+		initializeGuild(guild)
 	});
 	console.log('Steve is online!')
+})
+
+client.on('guildCreate', (guild) => {
+	initializeGuild(guild)
+	console.log(`Steve has been added to '${guild.name}'.`)
 })
 
 client.on('message', message => {
@@ -76,10 +85,11 @@ client.on('message', message => {
 				message.delete().then(msg => console.log(`Deleted ${msg.author.tag}'s message in '${msg.guild.name}' containing '${word}'.`))
 			}
 		});
-		if (message.author.id in points) {
-			points[message.author.id] += points_increment
+		
+		if (message.member.id in points) {
+			points[message.member.id] += points_increment
 		} else {
-			points[message.author.id] = points_increment
+			points[message.member.id] = points_increment
 		}
 
 		save_points = JSON.stringify(points);
@@ -119,6 +129,12 @@ client.on('message', message => {
 		client.commands.get('kick').execute(message, args);
 	} else if (command === 'adminhelp') {
 		client.commands.get('adminhelp').execute(message, args);
+	// } else if (command === 'shop') {
+	// 	client.commands.get('shop').execute(message, args);
+	// } else if (command === 'gift') {
+	// 	client.commands.get('gift').execute(message, args);
+	} else if (command === 'send') {
+		client.commands.get('send').execute(message, args);
 	} else {
 		const embed = new Discord.MessageEmbed().setColor(0x0FF00).setTitle('Unknown Command').setDescription(`'${message}' is an unknown command. Check your spelling/syntax.`);
 		message.reply(embed)

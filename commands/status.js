@@ -10,7 +10,7 @@ const parser = require('minecraft-motd-parser');
 
 module.exports = {
 	name: 'status',
-	description: "gives the status of the selected minecraft server!",
+	description: "Get the status of the Minecraft server.",
 	execute(message, args){
 		if (fs.existsSync(`guilds/${message.guild.id}/configuration.json`)) {
 			let properties_raw = fs.readFileSync(`./guilds/${message.guild.id}/configuration.json`);

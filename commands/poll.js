@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 
 module.exports = {
 	name: 'poll',
-	description: "this is a poll command!",
+	description: "Create a poll with the title and each option separated by semicolons.",
 	execute(message, args){
 		const embed = new Discord.MessageEmbed().setColor(0xFFC300);
 
@@ -40,7 +40,7 @@ module.exports = {
 				message.delete({timeout: 50}).catch(console.error);
 			})
 		} else {
-			message.reply(embed.setTitle('Poll').setDescription('Unknown command. Check your spelling/syntax.'))
+			message.reply(embed.setTitle('Poll').setDescription(`'${message}' is an unknown command. Check your spelling/syntax.`));
 		}
 	}
 }
