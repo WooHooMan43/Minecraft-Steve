@@ -1,5 +1,7 @@
 const Discord = require('discord.js');
 
+require('dotenv').config();
+
 const client = new Discord.Client();
 
 const prefix = '!';
@@ -142,4 +144,4 @@ client.on('message', message => {
 });
 
 // LEAVE AT END
-client.login('NjY2MDYxMjE2NzgyNzQ1NjM4.Xhur2A.w5Z2yrJN1FSJfp7JZCr_G5rAaR0');
+client.login(process.env.DISCORD_TOKEN);
