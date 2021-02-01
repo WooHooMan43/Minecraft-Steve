@@ -1,8 +1,6 @@
-const Discord = require('discord.js');
-
 const fs = require('fs');
 
-function clearChat(message, args) {
+function clearChat(message, args, Discord) {
     if (!isNaN(args[0]) && parseInt(args[0]) >= 0) {
         message.channel.messages.fetch({ limit: parseInt(args[0]) }).then(messages => {
             message.channel.bulkDelete(messages)
@@ -15,7 +13,7 @@ function clearChat(message, args) {
 module.exports = {
 	name: 'clearchat',
 	description: "this is a clear chat command!",
-	execute(message, args){
+	async execute(client, message, args, Discord){
         if (fs.existsSync(`guilds/${message.guild.id}/configuration.json`)) {
 			let properties_raw = fs.readFileSync(`./guilds/${message.guild.id}/configuration.json`);
 			var properties = JSON.parse(properties_raw);
@@ -24,7 +22,7 @@ module.exports = {
         };
 		
 		if (message.member.roles.cache.some(role => properties.AdminRoles.includes(role.name)) || properties.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id) {
-			clearChat(message, args)
+			clearChat(message, args, Discord)
 		} else {
 			const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Clear Chat').setDescription("You do not have permission to use this command.");
 			message.reply(embed);

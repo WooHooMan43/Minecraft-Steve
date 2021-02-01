@@ -1,7 +1,7 @@
 module.exports = {
 	name: 'ping',
 	description: "this is a ping command!",
-	execute(message, args){
+	async execute(client, message, args, Discord){
 		message.reply('pong!');
 	}
 }

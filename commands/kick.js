@@ -1,8 +1,6 @@
-const Discord = require('discord.js');
-
 const fs = require('fs');
 
-function kickUser(message, args) {
+function kickUser(message, args, Discord) {
     message.guild.members.cache.forEach(member => {
         let kickReason = args.slice(1,args.length - 1).join(' ')
         if (args[0] != undefined && member.user.id === args[0].replace(/[<@!>]/g, '')  && !member.user.bot) {
@@ -16,7 +14,7 @@ function kickUser(message, args) {
 module.exports = {
 	name: 'kick',
 	description: "this is a kick command!",
-	execute(message, args){
+	async execute(client, message, args, Discord){
         if (fs.existsSync(`guilds/${message.guild.id}/configuration.json`)) {
 			let properties_raw = fs.readFileSync(`./guilds/${message.guild.id}/configuration.json`);
 			var properties = JSON.parse(properties_raw);
@@ -25,7 +23,7 @@ module.exports = {
 		};
 		
 		if (message.member.roles.cache.some(role => properties.AdminRoles.includes(role.name)) || properties.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id) {
-			kickUser(message, args)
+			kickUser(message, args, Discord)
 		} else {
 			const embed = new Discord.MessageEmbed().setColor(0xFF0000).setTitle('Config').setDescription("You do not have permission to use this command.");
 			message.reply(embed);

@@ -1,9 +1,7 @@
-const Discord = require('discord.js');
-
 module.exports = {
 	name: 'nick',
 	description: "this is a nick command!",
-	execute(message, args){
+	async execute(client, message, args, Discord){
         if (args[0] != undefined && message.guild.ownerID !== message.member.id) {
 			message.member.setNickname(args.join(' '))
 			const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Nickname').setDescription(`You will now be known as '${args.join(' ')}'.`);

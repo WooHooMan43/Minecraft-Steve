@@ -1,5 +1,3 @@
-const Discord = require('discord.js');
-
 const fs = require('fs');
 
 const ServerUtils = require('minecraft-server-util');
@@ -11,7 +9,7 @@ const parser = require('minecraft-motd-parser');
 module.exports = {
 	name: 'status',
 	description: "Get the status of the Minecraft server.",
-	execute(message, args){
+	async execute(client, message, args, Discord){
 		if (fs.existsSync(`guilds/${message.guild.id}/configuration.json`)) {
 			let properties_raw = fs.readFileSync(`./guilds/${message.guild.id}/configuration.json`);
 			var properties = JSON.parse(properties_raw);

@@ -1,10 +1,8 @@
-const Discord = require('discord.js');
-
 const fs = require('fs');
 
 const base64ToImage = require('base64-to-image');
 
-function useShop(message, args, serverpoints, shopitems) {
+function useShop(message, args, serverpoints, shopitems, Discord) {
 	// if (args.length === 0) {
 	// 
 	// } else 
@@ -27,7 +25,7 @@ function useShop(message, args, serverpoints, shopitems) {
 module.exports = {
 	name: 'shop',
 	description: "displays the shop!",
-	execute(message, args){
+	async execute(client, message, args, Discord){
 		if (fs.existsSync(`guilds/${message.guild.id}/configuration.json`)) {
 			let properties_raw = fs.readFileSync(`./guilds/${message.guild.id}/configuration.json`);
 			var properties = JSON.parse(properties_raw);
@@ -48,7 +46,7 @@ module.exports = {
 		};
 		
 		if (message.member.roles.cache.some(role => properties.AdminRoles.includes(role.name)) || properties.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id) {
-			useShop(message, args, serverpoints, shopitems)
+			useShop(message, args, serverpoints, shopitems, Discord)
 		} else {
 			const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Shop').setDescription("You do not have permission to use this command.");
 			message.reply(embed);

@@ -1,9 +1,7 @@
-const Discord = require('discord.js');
-
 module.exports = {
 	name: 'adminhelp',
 	description: "this is a help command!",
-	execute(message, args){
+	async execute(client, message, args, Discord){
 		if (fs.existsSync(`guilds/${message.guild.id}/configuration.json`)) {
 			let properties_raw = fs.readFileSync(`./guilds/${message.guild.id}/configuration.json`);
 			var properties = JSON.parse(properties_raw);

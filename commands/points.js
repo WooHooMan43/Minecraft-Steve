@@ -1,8 +1,6 @@
-const Discord = require('discord.js');
-
 const fs = require('fs');
 
-function usePoints(message, args, serverpoints) {
+function usePoints(message, args, serverpoints, Discord) {
 	var foundUser = false;
 	const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points');
 	message.guild.members.cache.forEach(member => {
@@ -37,7 +35,7 @@ function usePoints(message, args, serverpoints) {
 module.exports = {
 	name: 'points',
 	description: "View your points.",
-	execute(message, args){
+	async execute(client, message, args, Discord){
 		if (fs.existsSync(`guilds/${message.guild.id}/configuration.json`)) {
 			let properties_raw = fs.readFileSync(`./guilds/${message.guild.id}/configuration.json`);
 			var properties = JSON.parse(properties_raw);
@@ -56,7 +54,7 @@ module.exports = {
 			message.reply(embed);
 		} else {
 			if (message.member.roles.cache.some(role => properties.AdminRoles.includes(role.name)) || properties.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id) {
-				serverpoints = usePoints(message, args, serverpoints)
+				serverpoints = usePoints(message, args, serverpoints, Discord)
 			} else {
 				const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points').setDescription('You do not have permission to use this command.');
 				message.reply(embed);

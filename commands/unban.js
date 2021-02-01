@@ -1,8 +1,6 @@
-const Discord = require('discord.js');
-
 const fs = require('fs');
 
-function unbanUser(message, args) {
+function unbanUser(message, args, Discord) {
     message.guild.members.cache.forEach(member => {
         let unbanReason = args.slice(1,args.length - 1).join(' ')
         if (args[0] != undefined && member.user.id === args[0].replace(/[<@!>]/g, '')  && !member.user.bot) {
@@ -16,7 +14,7 @@ function unbanUser(message, args) {
 module.exports = {
 	name: 'unban',
 	description: "this is an unban command!",
-	execute(message, args){
+	async execute(client, message, args, Discord){
 		if (fs.existsSync(`guilds/${message.guild.id}/configuration.json`)) {
 			let properties_raw = fs.readFileSync(`./guilds/${message.guild.id}/configuration.json`);
 			var properties = JSON.parse(properties_raw);
@@ -25,7 +23,7 @@ module.exports = {
 		};
 		
 		if (message.member.roles.cache.some(role => properties.AdminRoles.includes(role.name)) || properties.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id) {
-			unbanUser(message, args)
+			unbanUser(message, args, Discord)
 		} else {
 			const embed = new Discord.MessageEmbed().setColor(0xFF0000).setTitle('Unban').setDescription("You do not have permission to use this command.");
 			message.reply(embed);

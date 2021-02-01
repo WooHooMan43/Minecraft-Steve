@@ -1,8 +1,6 @@
-const Discord = require('discord.js');
-
 const fs = require("fs");
 
-function useConfig(message, args, properties) {
+function useConfig(message, args, properties, Discord) {
 	const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config')
 	if (args[0] === "help") {
 		message.reply(embed.setDescription('Help').addFields({name: '!config adminroles [add/remove] [Name]', value: 'Change which roles have permission to edit the config.', inline: true},{name: '!config adminroles list', value: 'Show which roles have permission to edit the config.', inline: true},{name: '!config userexceptions [add/remove] [@User]', value: 'Change which users have permission to edit the config.', inline: true},{name: '!config userexceptions list', value: 'Show which users have permission to edit the config.', inline: true},{name: '!config server [Address]', value: 'Changes the server which !status acquires data from.', inline: true},{name: '!config bannedwords [add/remove] [Word]', value: 'Change which words are banned from the server.', inline: true},{name: '!config increment [Value]', value: 'Change the number of pounts given with each message.', inline: true},{name: '!config reset', value: 'Reset the configs.', inline: true}));
@@ -122,7 +120,7 @@ function useConfig(message, args, properties) {
 module.exports = {
 	name: 'config',
 	description: "this is a configuration command!",
-	execute(message, args){
+	async execute(client, message, args, Discord){
 		if (fs.existsSync(`guilds/${message.guild.id}/configuration.json`)) {
 			let properties_raw = fs.readFileSync(`./guilds/${message.guild.id}/configuration.json`);
 			var properties = JSON.parse(properties_raw);
@@ -131,7 +129,7 @@ module.exports = {
 		};
 		
 		if (message.member.roles.cache.some(role => properties.AdminRoles.includes(role.name)) || properties.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id) {
-			properties = useConfig(message, args, properties)
+			properties = useConfig(message, args, properties, Discord)
 		} else {
 			const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription("You do not have permission to use this command.");
 			message.reply(embed);

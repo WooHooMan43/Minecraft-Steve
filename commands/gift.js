@@ -1,11 +1,9 @@
-const Discord = require('discord.js');
-
 const fs = require('fs');
 
 module.exports = {
 	name: 'gift',
 	description: "this is a nick command!",
-	execute(message, args){
+	async execute(client, message, args, Discord){
 		if (fs.existsSync(`guilds/${message.guild.id}/points.json`)) {
 			let serverpoints_raw = fs.readFileSync(`./guilds/${message.guild.id}/points.json`);
 			var serverpoints = JSON.parse(serverpoints_raw);

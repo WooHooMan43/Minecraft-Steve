@@ -1,9 +1,7 @@
-const Discord = require('discord.js');
-
 module.exports = {
 	name: 'poll',
 	description: "Create a poll with the title and each option separated by semicolons.",
-	execute(message, args){
+	async execute(client, message, args, Discord){
 		const embed = new Discord.MessageEmbed().setColor(0xFFC300);
 
 		var pollArgs = args.slice(1).join(' ').split(';');
