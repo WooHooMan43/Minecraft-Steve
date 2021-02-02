@@ -1,16 +1,5 @@
 const fs = require('fs');
 
-function unbanUser(message, args, Discord) {
-    message.guild.members.cache.forEach(member => {
-        let unbanReason = args.slice(1,args.length - 1).join(' ')
-        if (args[0] != undefined && member.user.id === args[0].replace(/[<@!>]/g, '')  && !member.user.bot) {
-            message.guild.members.unban(member, { reason: unbanReason }).then(unbannedUser => console.log(`Unbanned ${unbannedUser.user.tag} from '${unbannedUser.guild.name}': '${unbanReason}'.`))
-            const embed = new Discord.MessageEmbed().setColor(0xFF0000).setTitle('Unban').setDescription(`Unbanned ${member.user.tag}: ${unbanReason}.`);
-            message.reply(embed);
-        }
-    })
-}
-
 module.exports = {
 	name: 'unban',
 	description: "this is an unban command!",
@@ -23,7 +12,14 @@ module.exports = {
 		};
 		
 		if (message.member.roles.cache.some(role => properties.AdminRoles.includes(role.name)) || properties.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id) {
-			unbanUser(message, args, Discord)
+            let unbannedMember = message.mentions.members.first();
+            let unbanReason = args.slice(1,args.length - 1).join(' ');
+            if (!unbannedMember.user.bot) {
+				message.guild.members.unban(unbannedMember, { reason: unbanReason });
+				console.log(`Unbanned ${unbannedMember.user.tag} from '${unbannedMember.guild.name}': '${unbanReason}'.`);
+				const embed = new Discord.MessageEmbed().setColor(0xFF0000).setTitle('Unban').setDescription(`Unbanned ${unbannedMember.user.tag}: ${unbanReason}.`);
+				message.reply(embed);
+			}
 		} else {
 			const embed = new Discord.MessageEmbed().setColor(0xFF0000).setTitle('Unban').setDescription("You do not have permission to use this command.");
 			message.reply(embed);

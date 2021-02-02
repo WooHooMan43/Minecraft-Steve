@@ -1,37 +1,5 @@
 const fs = require('fs');
 
-function usePoints(message, args, serverpoints, Discord) {
-	var foundUser = false;
-	const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points');
-	message.guild.members.cache.forEach(member => {
-		if (args[0] != undefined && member.user.id === args[0].replace(/[<@!>]/g, '') && !member.user.bot) {
-			if (args.length <= 1) {
-				message.reply(embed.setDescription(`${member.user.tag} has ${serverpoints[member.user.id]} points.`));
-			} else if (args[1] === 'add') {
-				serverpoints[member.user.id] += parseInt(args[2]);
-				message.reply(embed.setDescription(`Added ${args[2]} points to ${member.user.tag}.`).addField('Total', serverpoints[member.user.id], true));
-			} else if (args[1] === 'remove') {
-				serverpoints[member.user.id] -= parseInt(args[2]);
-				message.reply(embed.setDescription(`Removed ${args[2]} points from ${member.user.tag}.`).addField('Total', serverpoints[member.user.id], true));
-			} else if (args[1] === 'reset') {
-				serverpoints[member.user.id] = 0;
-				message.reply(embed.setDescription(`Reset ${member.user.tag} to 0 points.`));
-			} else if (args[1] === 'set') {
-				serverpoints[member.user.id] = parseInt(args[2]);
-				message.reply(embed.setDescription(`Set ${member.user.tag} to ${args[2]} points.`));
-			};
-			foundUser = true;
-		} else if (args[0] === 'help') {
-			message.reply(embed.setDescription('Help').addFields({name: '!points [@User]', value: 'Displays the points of a member.', inline: true},{name: '!points [@User] [add/remove/set] [value]', value: 'Modify the points of a user', inline: true},{name: '!points [@User] reset', value: 'Reset the points of a user.', inline: true}));
-			foundUser = true;
-		};
-	});
-	if (!foundUser) {
-		message.reply(embed.setDescription(`'${message}' is an unknown command. Check your spelling/syntax.`));
-	};
-	return serverpoints
-}
-
 module.exports = {
 	name: 'points',
 	description: "View your points.",
@@ -54,15 +22,39 @@ module.exports = {
 			message.reply(embed);
 		} else {
 			if (message.member.roles.cache.some(role => properties.AdminRoles.includes(role.name)) || properties.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id) {
-				serverpoints = usePoints(message, args, serverpoints, Discord)
+				const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points');
+				if (args[0] === 'help') {
+					message.reply(embed.setDescription('Help').addFields({name: '!points [@User]', value: 'Displays the points of a member.', inline: true},{name: '!points [@User] [add/remove/set] [value]', value: 'Modify the points of a user', inline: true},{name: '!points [@User] reset', value: 'Reset the points of a user.', inline: true}));
+				} else if (message.mentions.members.first()) {
+					let memberPoints = message.mentions.members.first()
+					if (!memberPoints.user.bot) {
+						if (args.length <= 1) {
+							message.reply(embed.setDescription(`${memberPoints.user.tag} has ${serverpoints[memberPoints.user.id]} points.`));
+						} else if (args[1] === 'add') {
+							serverpoints[memberPoints.user.id] += parseInt(args[2]);
+							message.reply(embed.setDescription(`Added ${args[2]} points to ${memberPoints.user.tag}.`).addField('Total', serverpoints[memberPoints.user.id], true));
+						} else if (args[1] === 'remove') {
+							serverpoints[memberPoints.user.id] -= parseInt(args[2]);
+							message.reply(embed.setDescription(`Removed ${args[2]} points from ${memberPoints.user.tag}.`).addField('Total', serverpoints[memberPoints.user.id], true));
+						} else if (args[1] === 'reset') {
+							serverpoints[memberPoints.user.id] = 0;
+							message.reply(embed.setDescription(`Reset ${memberPoints.user.tag} to 0 points.`));
+						} else if (args[1] === 'set') {
+							serverpoints[memberPoints.user.id] = parseInt(args[2]);
+							message.reply(embed.setDescription(`Set ${memberPoints.user.tag} to ${args[2]} points.`));
+						};
+					}
+				} else {
+					message.reply(embed.setDescription(`'${message}' is an unknown command. Check your spelling/syntax.`));
+				}
 			} else {
 				const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points').setDescription('You do not have permission to use this command.');
 				message.reply(embed);
 			}
 		};
 
-		let serverpointsStr = JSON.stringify(serverpoints);
-		fs.writeFileSync(`./guilds/${message.guild.id}/points.json`, serverpointsStr, function(err, result) {
+		let serverpoints_new = JSON.stringify(serverpoints);
+		fs.writeFileSync(`./guilds/${message.guild.id}/points.json`, serverpoints_new, function(err, result) {
 			if(err) console.log('error', err);
 			console.log(`Saved points of ${message.guild.name}.`)
 		})

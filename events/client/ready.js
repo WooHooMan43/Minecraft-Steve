@@ -1,8 +1,8 @@
 const fs = require('fs');
 
-module.exports = (Discord, client) => {
-	const { initializeGuild } = require('./../../functions');
+const { initializeGuild } = require('./../../functions');
 
+module.exports = (Discord, client) => {
 	client.user.setPresence({
 		activity: {
 			name: "Minecraft",

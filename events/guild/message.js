@@ -1,16 +1,28 @@
 const fs = require('fs');
 
-module.exports = (Discord, client, message) => {
-	const { checkMessage } = require('./../../functions');
-	
+const { checkMessage } = require('./../../functions');
+
+module.exports = (Discord, client, message) => {	
+    client.user.setPresence({
+		activity: {
+			name: "Minecraft",
+			type: 0
+		}
+	});
+    
     const prefix = '!'
 
-    if (!message.content.startsWith(prefix) && !message.author.bot) {
+    let muted_users_raw = fs.readFileSync(`guilds/${message.guild.id}/muted_users.json`)
+    let muted_users = JSON.parse(muted_users_raw);
+
+    if (muted_users.includes(message.author.id)) {
+        message.delete().then(msg => console.log(`Deleted ${msg.author.tag}'s message in '${msg.guild.name}' because they are muted.`));
+        return
+    } else if (!message.content.startsWith(prefix) && !message.author.bot) {
         checkMessage(message);
 		return
-	};
-    if (!message.content.startsWith(prefix) || message.author.bot) return;
-
+	} else if (message.author.bot) return;
+    
     const args = message.content.slice(prefix.length).split(/ +/);
     const cmd = args.shift().toLowerCase()
 
