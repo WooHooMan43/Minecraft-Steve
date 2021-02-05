@@ -24,14 +24,23 @@ There are a plethora of commands for both server members and administrators, all
   - Displays information about a set Minecraft server
 - `!nick`
   - Changes a user's nickname  
-  *__Note:__ This does not work with the owner of the Discord server due to permission constraints*
+  *__Note:__ This does not work on the owner of the Discord server due to permission constraints.*
 - `!poll [YN/2/3/4] [Title] [Options]`
   - Creates a poll for members to vote on  
-  *__Note:__ The title and each option should be separated by semicolons*
+  *__Note:__ The title and each option should be separated by semicolons.*
 - `!points`
   - Gets the member's points on that server
 - `!send [@User] [Value]`
   - Sends a member some points
+- `!gift` and its subcommands
+  - `!gift all [Value]`
+    - Give everyone (except you and bots) an even, clean portion of points  
+    *__Note:__ On large servers, a lot of points are required to give any to users.*
+  - `!gift many [Value] [Users]`
+    - Give some random users (who are not you or a bot) an even, clean portion of points  
+    *__Note:__ With large numbers of users, a lot of points are required to give any to them.*
+  - `!gift one [Value] [Users]`
+    - Give a random user (who is not you or a bot) some points
 
 ### Administrator Commands
 
@@ -45,8 +54,18 @@ Administrators are those who have the correct roles, have an exception in the co
   - Bans a user from the server
 - `!unban [@User] [Reason]`
   - Unbans a user from the server
+- `!tempban [@User] [Time] [Reason]`
+  - Temporarily bans a user from the server  
+  *__Note:__ See below for time formats.*
 - `!kick [@User] [Reason]`
   - Removes a user from the server
+- `!mute [@User] [Reason]`
+  - Mutes a user on the server
+- `!unmute [@User] [Reason]`
+  - Unmutes a user on the server
+- `!tempmute [@User] [Time] [Reason]`
+  - Temporarily mutes a user on the server  
+  *__Note:__ See below for time formats.*
 - `!points [@User]` and its subcommands.
   - `!points [@User]`
     - Get a member's points
@@ -70,9 +89,32 @@ Administrators are those who have the correct roles, have an exception in the co
   - `!config server [Address]`
     - Change the server `!status` retrieves information from
 
-## How do I add it to my server?
+### Time Formats
 
-<!--You kinda can't. I haven't made the bot public yet (nor have I made this repo public), so its inaccessable for anyone but me. However, you can ask me and I will likely add it to your server (just be aware that the bot will be up and down due to the bot running off a raspberry pi in my basement).-->
+`[Amount][s/m/h/d/y]`
+
+- Amount
+  - A number
+- Time unit
+  - Defaults to milliseconds
+  - `s`
+    - Seconds
+  - `m`
+    - Minutes
+  - `h`
+    - Hours
+  - `d`
+    - Days
+  - `w`
+    - Weeks
+  - `y`
+    - Years
+
+Examples: `3d`, `6h`, `10m`, `2w`, `1y`, `30s`
+
+*__Note:__ Times cannot be combined (i.e.* `1y2w3d4h5m6s` *or anything of that sort).*
+
+## How do I add it to my server?
 
 Here is a little forewarning before you add this bot. This bot is **rather buggy** and can crash for a number of reasons at any given moment. The bot might not also be fixed for hours at a time (school, sleep, etc.), but I will get to it as soon as I can (and when I notice). Thank you for your patience with this bot.
 
@@ -83,5 +125,5 @@ to add this bot to your server.
 ## To-Do
 
 - [ ] Add a shop with roles and emoji
-- [ ] Add a gifting system
+- [x] Add a gifting system
 - [x] Clarify everything

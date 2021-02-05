@@ -13,7 +13,8 @@ module.exports = {
 		
 		if (message.member.roles.cache.some(role => properties.AdminRoles.includes(role.name)) || properties.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id) {
             let unbannedMember = message.mentions.members.first();
-            let unbanReason = args.slice(1,args.length - 1).join(' ');
+            let unbanReason = args.slice(1,args.length).join(' ');
+			if (unbanReason == '') unbanReason = 'The ban hammer has spoken';
             if (!unbannedMember.user.bot) {
 				message.guild.members.unban(unbannedMember, { reason: unbanReason });
 				console.log(`Unbanned ${unbannedMember.user.tag} from '${unbannedMember.guild.name}': '${unbanReason}'.`);

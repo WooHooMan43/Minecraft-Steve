@@ -115,15 +115,15 @@ module.exports = {
 			} else {
 				message.reply(embed.setDescription(`'${message}' is an unknown command. Check your spelling/syntax.`));
 			};
+			
+			let properties_new = {ServerAddress: properties.ServerAddress, AdminRoles: properties.AdminRoles, UserExceptions: properties.UserExceptions, PointsIncrement: properties.PointsIncrement, BannedWords: properties.BannedWords};;
+			fs.writeFile(`./guilds/${message.guild.id}/configuration.json`, JSON.stringify(properties_new), function(err, result) {
+				if(err) console.log('error', err);
+				console.log(`Saved config of ${message.guild.name}.`)
+			});
 		} else {
 			const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Config').setDescription("You do not have permission to use this command.");
 			message.reply(embed);
 		};
-
-		let properties_new = {ServerAddress: properties.ServerAddress, AdminRoles: properties.AdminRoles, UserExceptions: properties.UserExceptions, PointsIncrement: properties.PointsIncrement, BannedWords: properties.BannedWords};;
-		fs.writeFile(`./guilds/${message.guild.id}/configuration.json`, JSON.stringify(properties_new), function(err, result) {
-			if(err) console.log('error', err);
-			console.log(`Saved config of ${message.guild.name}.`)
-		});
 	}
 }

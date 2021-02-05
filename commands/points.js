@@ -43,6 +43,12 @@ module.exports = {
 							serverpoints[memberPoints.user.id] = parseInt(args[2]);
 							message.reply(embed.setDescription(`Set ${memberPoints.user.tag} to ${args[2]} points.`));
 						};
+						
+						let serverpoints_new = JSON.stringify(serverpoints);
+						fs.writeFileSync(`./guilds/${message.guild.id}/points.json`, serverpoints_new, function(err, result) {
+							if(err) console.log('error', err);
+							console.log(`Saved points of ${message.guild.name}.`)
+						})
 					}
 				} else {
 					message.reply(embed.setDescription(`'${message}' is an unknown command. Check your spelling/syntax.`));
@@ -52,11 +58,5 @@ module.exports = {
 				message.reply(embed);
 			}
 		};
-
-		let serverpoints_new = JSON.stringify(serverpoints);
-		fs.writeFileSync(`./guilds/${message.guild.id}/points.json`, serverpoints_new, function(err, result) {
-			if(err) console.log('error', err);
-			console.log(`Saved points of ${message.guild.name}.`)
-		})
 	}
 }

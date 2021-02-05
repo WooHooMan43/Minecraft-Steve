@@ -18,15 +18,15 @@ module.exports = {
 			serverpoints[recievedMember.user.id] += pointsSent
 			const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points').setDescription(`Sent ${args[1]} points to ${recievedMember.user.tag}.`);
 			message.reply(embed);
+
+			let serverpoints_new = JSON.stringify(serverpoints);
+			fs.writeFileSync(`./guilds/${message.guild.id}/points.json`, serverpoints_new, function(err, result) {
+				if(err) console.log('error', err);
+				console.log(`Saved points of ${message.guild.name}.`)
+			})
 		} else {
         	const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Points').setDescription(`'${message}' is an unknown command. Check your spelling/syntax.`);
         	message.reply(embed);
 		};
-
-        let serverpoints_new = JSON.stringify(serverpoints);
-		fs.writeFileSync(`./guilds/${message.guild.id}/points.json`, serverpoints_new, function(err, result) {
-			if(err) console.log('error', err);
-			console.log(`Saved points of ${message.guild.name}.`)
-		})
 	}
 }

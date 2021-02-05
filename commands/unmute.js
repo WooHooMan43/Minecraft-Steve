@@ -18,23 +18,24 @@ module.exports = {
         };
 
         if (message.member.roles.cache.some(role => properties.AdminRoles.includes(role.name)) || properties.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id) {
-            let unmutedMember = message.mentions.members.first()
-            let unmuteReason = args.slice(1,args.length - 1).join(' ')
+            let unmutedMember = message.mentions.members.first();
+			let unmuteReason = args.slice(1,args.length).join(' ');
+			if (unmuteReason == '') unmuteReason = 'Unuted by moderator';
             if (!unmutedMember.user.bot) {
 				muted_users.splice(muted_users.indexOf(unmutedMember.user.id),1);
                 console.log(`Unmuted ${unmutedMember.user.tag} in '${unmutedMember.guild.name}': '${unmuteReason}'.`);
                 const embed = new Discord.MessageEmbed().setColor(0xFF0000).setTitle('Unmute').setDescription(`Unmuted ${unmutedMember.user.tag}: ${unmuteReason}.`);
-                message.reply(embed);
+				message.reply(embed);
+				
+				let muted_users_new = JSON.stringify(muted_users);
+				fs.writeFileSync(`./guilds/${message.guild.id}/muted_users.json`, muted_users_new, function(err, result) {
+					if(err) console.log('error', err);
+					console.log(`Saved muted users of ${message.guild.name}.`)
+				})
             }
         } else {
 			const embed = new Discord.MessageEmbed().setColor(0xFF0000).setTitle('Unmute').setDescription("You do not have permission to use this command.");
 			message.reply(embed);
         };
-
-        let muted_users_new = JSON.stringify(muted_users);
-		fs.writeFileSync(`./guilds/${message.guild.id}/muted_users.json`, muted_users_new, function(err, result) {
-			if(err) console.log('error', err);
-			console.log(`Saved muted users of ${message.guild.name}.`)
-		})
 	}
 }

@@ -12,8 +12,9 @@ module.exports = {
 		};
 		
 		if (message.member.roles.cache.some(role => properties.AdminRoles.includes(role.name)) || properties.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id) {
-			let kickedMember = message.mentions.members.first()
-            let kickReason = args.slice(1,args.length - 1).join(' ')
+			let kickedMember = message.mentions.members.first();
+			let kickReason = args.slice(1,args.length).join(' ');
+			if (kickReason == '') kickReason = 'Kicked by moderator';
             if (!kickedMember.user.bot) {
 				kickedMember.kick(kickReason);
 				console.log(`Kicked ${kickedMember.user.tag} from '${kickedMember.guild.name}': '${kickReason}'.`);
