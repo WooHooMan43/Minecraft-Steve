@@ -1,28 +1,30 @@
+// Require modules
 const fs = require('fs');
 
 module.exports = {
 	name: 'ban',
-	description: "this is a ban command!",
-	async execute(client, message, args, Discord){
-        if (fs.existsSync(`guilds/${message.guild.id}/configuration.json`)) {
+	description: "Bans a user from the server.",
+	viewable: false,
+	admin: true,
+	subcommands: '[@User] (Reason)',
+	async execute(client, message, args, Discord, replyEmbed){
+		if (fs.existsSync(`guilds/${message.guild.id}/configuration.json`)) {
 			let properties_raw = fs.readFileSync(`./guilds/${message.guild.id}/configuration.json`);
 			var properties = JSON.parse(properties_raw);
 		} else {
-			var properties = {ServerAddress:'play.woohoocraft.net', AdminRoles:["Admin","Administrator","Owner","Supreme Councilmen"], UserExceptions:[], PointsIncrement:5, BannedWords:["fag","retard","nigger","nigga","niger","nibba","niga","nibber","niber","whore"]};
-        };
-        if (message.member.roles.cache.some(role => properties.AdminRoles.includes(role.name)) || properties.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id) {
+			var properties = {AdminRoles:["Admin","Administrator","Owner","Supreme Councilmen"], UserExceptions:[]};
+		};
+
+		if (message.member.roles.cache.some(role => properties.AdminRoles.includes(role.name)) || properties.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id) { // Check permissions
 			let bannedMember = message.mentions.members.first();
 			let banReason = args.slice(1,args.length).join(' ');
-			if (banReason == '') banReason = 'The ban hammer has spoken';
-            if (!bannedMember.user.bot) {
+			if (banReason == '' || banReason == undefined) banReason = 'The ban hammer has spoken'; // If no reason given, use this
+			if (!bannedMember.user.bot) { // Don't ban bots
 				message.guild.members.ban(bannedMember, { reason: banReason });
 				console.log(`Banned ${bannedMember.user.tag} from '${bannedMember.guild.name}': '${banReason}'.`);
-				const embed = new Discord.MessageEmbed().setColor(0xFF0000).setTitle('Ban').setDescription(`Banned ${bannedMember.user.tag}: ${banReason}.`);
-				message.reply(embed);
-			}
-		} else {
-			const embed = new Discord.MessageEmbed().setColor(0xFF0000).setTitle('Ban').setDescription("You do not have permission to use this command.");
-			message.reply(embed);
-		}
+				message.reply(replyEmbed.setColor(0xFF0000).setTitle('Ban').setDescription(`Banned ${bannedMember.user.tag}: ${banReason}.`));
+				return 'Good';
+			} else return 'Unknown';
+		} else return 'Permission';
 	}
 }

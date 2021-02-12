@@ -9,7 +9,6 @@
   "author": "Nicklas Pawlicki",
   "license": "ISC",
   "dependencies": {
-    "base64-to-image": "^1.0.2",
     "discord.js": "^12.3.1",
     "dotenv": "^8.2.0",
     "minecraft-motd-parser": "^1.0.1",

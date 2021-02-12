@@ -1,2 +1,5 @@
+# Ignore guilds from testing
 guilds
+
+# Ignore unfinished commands
 commands-wip

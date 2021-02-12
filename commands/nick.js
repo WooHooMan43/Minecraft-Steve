@@ -1,18 +1,19 @@
 module.exports = {
 	name: 'nick',
-	description: "this is a nick command!",
-	async execute(client, message, args, Discord){
-        if (args[0] != undefined && message.guild.ownerID !== message.member.id) {
+	description: "Changes a user's nickname.",
+	viewable: true,
+	admin: false,
+	subcommands: '[Name]',
+	async execute(client, message, args, Discord, replyEmbed){
+		if (args[0] != undefined && message.guild.ownerID !== message.member.id) { // Check if they entered a nickname and if they are not the owner
 			message.member.setNickname(args.join(' '))
-			const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Nickname').setDescription(`You will now be known as '${args.join(' ')}'.`);
-			message.reply(embed);
-        } else if (args[0] == undefined) {
-			const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Nickname').setDescription(`You will no longer be known as '${message.member.nickname}'.`); // Need this before to display their old nickname
+			message.reply(replyEmbed.setColor(0xFFC300).setTitle('Nickname').setDescription(`You will now be known as '${args.join(' ')}'.`));
+		} else if (args[0] == undefined) { // Remove nickname if not specified
+			message.reply(replyEmbed.setColor(0xFFC300).setTitle('Nickname').setDescription(`You will no longer be known as '${message.member.nickname}'.`)); // Need this before to display their old nickname
 			message.member.setNickname('');
-			message.reply(embed);
-		} else {
-			const embed = new Discord.MessageEmbed().setColor(0xFFC300).setTitle('Nickname').setDescription(`Unable to change your nickname.`);
-			message.reply(embed);
-		}
+		} else { // Basically for if the user is the owner because bots cant change the server owner's information
+			message.reply(replyEmbed).setColor(0xFFC300).setTitle('Nickname').setDescription(`Unable to change your nickname.`);
+		};
+		return 'Good';
 	}
 }

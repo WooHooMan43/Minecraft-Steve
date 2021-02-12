@@ -19,79 +19,77 @@ There are a plethora of commands for both server members and administrators, all
 ### Universal Commands
 
 - `!help`
-  - Displays commands accessible to all users
+  - Displays a menu of commands.
 - `!status`
-  - Displays information about a set Minecraft server
+  - Displays information about a set Minecraft server.
 - `!nick`
-  - Changes a user's nickname  
+  - Changes a user's nickname.  
   *__Note:__ This does not work on the owner of the Discord server due to permission constraints.*
 - `!poll [YN/2/3/4] [Title] [Options]`
-  - Creates a poll for members to vote on  
+  - Creates a poll for members to vote on.  
   *__Note:__ The title and each option should be separated by semicolons.*
 - `!points`
-  - Gets the member's points on that server
+  - Gets the member's points on that server.
 - `!send [@User] [Value]`
-  - Sends a member some points
+  - Sends a member some points.
 - `!gift` and its subcommands
   - `!gift all [Value]`
-    - Give everyone (except you and bots) an even, clean portion of points  
+    - Give everyone (except you and bots) an even, clean portion of points.  
     *__Note:__ On large servers, a lot of points are required to give any to users.*
   - `!gift many [Value] [Users]`
-    - Give some random users (who are not you or a bot) an even, clean portion of points  
+    - Give some random users (who are not you or a bot) an even, clean portion of points.  
     *__Note:__ With large numbers of users, a lot of points are required to give any to them.*
   - `!gift one [Value] [Users]`
-    - Give a random user (who is not you or a bot) some points
+    - Give a random user (who is not you or a bot) some points.
 
 ### Administrator Commands
 
 Administrators are those who have the correct roles, have an exception in the config, or are the owner of the server.
 
-- `!adminhelp`
-  - Displays commands accessible to administrators
 - `!clearchat [Value]`
-  - Deletes a certain number preceding messages
+  - Deletes a certain number preceding messages.
 - `!ban [@User] [Reason]`
-  - Bans a user from the server
+  - Bans a user from the server.
 - `!unban [@User] [Reason]`
-  - Unbans a user from the server
+  - Unbans a user from the server.
 - `!tempban [@User] [Time] [Reason]`
-  - Temporarily bans a user from the server  
+  - Temporarily bans a user from the server.  
   *__Note:__ See below for time formats.*
 - `!kick [@User] [Reason]`
-  - Removes a user from the server
+  - Removes a user from the server.
 - `!mute [@User] [Reason]`
-  - Mutes a user on the server
+  - Mutes a user on the server.
 - `!unmute [@User] [Reason]`
-  - Unmutes a user on the server
+  - Unmutes a user on the server.
 - `!tempmute [@User] [Time] [Reason]`
-  - Temporarily mutes a user on the server  
+  - Temporarily mutes a user on the server.  
   *__Note:__ See below for time formats.*
 - `!points [@User]` and its subcommands.
   - `!points [@User]`
-    - Get a member's points
+    - Get a member's points.
   - `!points [@User] [add/remove/set] [Value]`
-    - Change a member's points
+    - Change a member's points.
   - `!points [@User] reset`
-    - Set a member's points to 0
+    - Set a member's points to 0.
 - `!config` and its subcommands.
   - `!config adminroles list`
-    - List roles with permissions
+    - List roles with permissions.
   - `!config adminroles [add/remove] [Role Name]`
-    - Change roles with permissions
+    - Change roles with permissions.
   - `!points userexceptions list`
-    - List users with permissions
+    - List users with permissions.
   - `!config userexceptions [add/remove] [@User]`
-    - Change users with permissions
+    - Change users with permissions.
   - `!config increment [Value]`
-    - Change the amount of points awarded per message
+    - Change the amount of points awarded per message.
   - `!config bannedwords [add/remove] [Word]`
-    - Change the words banned on the server
+    - Change the words banned on the server.
   - `!config server [Address]`
-    - Change the server `!status` retrieves information from
+    - Change the server `!status` retrieves information from.
 
 ### Time Formats
 
-`[Amount][s/m/h/d/y]`
+`[Amount][Time Unit]`
 
 - Amount
   - A number
@@ -110,7 +108,7 @@ Administrators are those who have the correct roles, have an exception in the co
   - `y`
     - Years
 
-Examples: `3d`, `6h`, `10m`, `2w`, `1y`, `30s`
+Examples: `3d`, `6h`, `10m`, `2w`, `1y`, `30s`, `75000`
 
 *__Note:__ Times cannot be combined (i.e.* `1y2w3d4h5m6s` *or anything of that sort).*
 

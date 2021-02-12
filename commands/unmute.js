@@ -1,41 +1,43 @@
+// Require modules
 const fs = require('fs');
 
 module.exports = {
 	name: 'unmute',
-	description: "this is an unmute command!",
-	async execute(client, message, args, Discord){
-        if (fs.existsSync(`guilds/${message.guild.id}/configuration.json`)) {
+	description: "Unmutes a user on the server.",
+	viewable: false,
+	admin: true,
+	subcommands: '[@User] (Reason)',
+	async execute(client, message, args, Discord, replyEmbed){
+		if (fs.existsSync(`guilds/${message.guild.id}/configuration.json`)) {
 			let properties_raw = fs.readFileSync(`./guilds/${message.guild.id}/configuration.json`);
 			var properties = JSON.parse(properties_raw);
 		} else {
-			var properties = {ServerAddress:'play.woohoocraft.net', AdminRoles:["Admin","Administrator","Owner","Supreme Councilmen"], UserExceptions:[], PointsIncrement:5, BannedWords:["fag","retard","nigger","nigga","niger","nibba","niga","nibber","niber","whore"]};
-        };
-        if (fs.existsSync(`guilds/${message.guild.id}/muted_users.json`)) {
+			var properties = {AdminRoles:["Admin","Administrator","Owner","Supreme Councilmen"], UserExceptions:[]};
+		};
+		if (fs.existsSync(`guilds/${message.guild.id}/muted_users.json`)) {
 			let muted_users_raw = fs.readFileSync(`./guilds/${message.guild.id}/muted_users.json`);
 			var muted_users = JSON.parse(muted_users_raw);
 		} else {
 			var muted_users = [];
-        };
+		};
 
-        if (message.member.roles.cache.some(role => properties.AdminRoles.includes(role.name)) || properties.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id) {
-            let unmutedMember = message.mentions.members.first();
+		if (message.member.roles.cache.some(role => properties.AdminRoles.includes(role.name)) || properties.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id) { // Check permissions
+			let unmutedMember = message.mentions.members.first();
 			let unmuteReason = args.slice(1,args.length).join(' ');
-			if (unmuteReason == '') unmuteReason = 'Unuted by moderator';
-            if (!unmutedMember.user.bot) {
+			if (unmuteReason == '' || unmuteReason == undefined) unmuteReason = 'Unmuted by moderator'; // If no reason given, use this
+			if (!unmutedMember.user.bot) { // Don't unmute bots
 				muted_users.splice(muted_users.indexOf(unmutedMember.user.id),1);
-                console.log(`Unmuted ${unmutedMember.user.tag} in '${unmutedMember.guild.name}': '${unmuteReason}'.`);
-                const embed = new Discord.MessageEmbed().setColor(0xFF0000).setTitle('Unmute').setDescription(`Unmuted ${unmutedMember.user.tag}: ${unmuteReason}.`);
-				message.reply(embed);
+				console.log(`Unmuted ${unmutedMember.user.tag} in '${unmutedMember.guild.name}': '${unmuteReason}'.`);
+				message.reply(replyEmbed.setColor(0xFF0000).setTitle('Unmute').setDescription(`Unmuted ${unmutedMember.user.tag}: ${unmuteReason}.`));
 				
+				// Save the list of muted users
 				let muted_users_new = JSON.stringify(muted_users);
 				fs.writeFileSync(`./guilds/${message.guild.id}/muted_users.json`, muted_users_new, function(err, result) {
 					if(err) console.log('error', err);
 					console.log(`Saved muted users of ${message.guild.name}.`)
-				})
-            }
-        } else {
-			const embed = new Discord.MessageEmbed().setColor(0xFF0000).setTitle('Unmute').setDescription("You do not have permission to use this command.");
-			message.reply(embed);
-        };
+				});
+				return 'Good';
+			} else return 'Unknown';
+		} else return 'Permission';;
 	}
 }

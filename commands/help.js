@@ -1,10 +1,43 @@
+// Require Modules
+const fs = require('fs')
+
 module.exports = {
 	name: 'help',
 	description: "Displays the help menu.",
-	async execute(client, message, args, Discord){
+	viewable: true,
+	admin: false,
+	subcommands: '[Command]',
+	async execute(client, message, args, Discord, replyEmbed){
+		if (fs.existsSync(`guilds/${message.guild.id}/configuration.json`)) {
+			let properties_raw = fs.readFileSync(`./guilds/${message.guild.id}/configuration.json`);
+			var properties = JSON.parse(properties_raw);
+		} else {
+			var properties = {AdminRoles:["Admin","Administrator","Owner","Supreme Councilmen"], UserExceptions:[]};
+		};
+
 		if (args.length == 0) {
-			const embed = new Discord.MessageEmbed().setColor(0x883C88).setTitle('Help').addFields({name: '!help', value: 'Displays the help menu.', inline: true},{name: '!status', value: 'Get the status of the Minecraft server.', inline: true},{name: '!points', value: 'View your points.', inline: true},{name: '!poll [YN/2/3/4] [Title] (Options)', value: 'Create a poll with the title and each option separated by semicolons.', inline: true});
-			message.reply(embed);
-		}
+			client.commands.forEach(command => {
+				if ((command.admin && (message.member.roles.cache.some(role => properties.AdminRoles.includes(role.name)) || properties.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id)) || !command.admin || command.viewable) {
+					if (typeof command.subcommands == 'string') replyEmbed.addField(`!${command.name} ${command.subcommands}`, command.description, true);
+					else replyEmbed.addField(`!${command.name}`, command.description, true);
+				}
+			});
+			message.reply(replyEmbed.setColor(0x883C88).setTitle('Help'));
+			return 'Good';
+		} else if (client.commands.some(command => command.name == args[0])) {
+			let command = client.commands.get(args[0])
+			if ((command.admin && (message.member.roles.cache.some(role => properties.AdminRoles.includes(role.name)) || properties.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id)) || !command.admin) {
+				if (typeof command.subcommands == 'object') {
+					Object.keys(command.subcommands).forEach(subcommand => {
+						replyEmbed.addField(`!${args[0]} ${subcommand}`, command.subcommands[subcommand], true)
+					});
+					message.reply(replyEmbed.setColor(0x883C88).setTitle('Help'));
+					return 'Good';
+				} else if (typeof command.subcommands == 'string') {
+					message.reply(replyEmbed.setColor(0x883C88).setTitle('Help').addField(`!${args[0]} ${command.subcommands}`, command.description, true ));
+					return 'Good';
+				} else return 'Unknown';
+			} else return 'Permission';
+		} else return 'Unknown';
 	}
 }

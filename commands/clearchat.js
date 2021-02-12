@@ -1,27 +1,29 @@
+// Require modules
 const fs = require('fs');
 
 module.exports = {
 	name: 'clearchat',
-	description: "this is a clear chat command!",
-	async execute(client, message, args, Discord){
-        if (fs.existsSync(`guilds/${message.guild.id}/configuration.json`)) {
+	description: "Deletes a certain number preceding messages.",
+	viewable: false,
+	admin: true,
+	subcommands: '[Value]',
+	async execute(client, message, args, Discord, replyEmbed){
+		if (fs.existsSync(`guilds/${message.guild.id}/configuration.json`)) {
 			let properties_raw = fs.readFileSync(`./guilds/${message.guild.id}/configuration.json`);
 			var properties = JSON.parse(properties_raw);
 		} else {
-			var properties = {ServerAddress:'play.woohoocraft.net', AdminRoles:["Admin","Administrator","Owner","Supreme Councilmen"], UserExceptions:[], PointsIncrement:5, BannedWords:["fag","retard","nigger","nigga","niger","nibba","niga","nibber","niber","whore"]};
-        };
+			var properties = {AdminRoles:["Admin","Administrator","Owner","Supreme Councilmen"], UserExceptions:[]};
+		};
 		
-		if (message.member.roles.cache.some(role => properties.AdminRoles.includes(role.name)) || properties.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id) {
-			if (!isNaN(args[0]) && parseInt(args[0]) >= 0) {
+		// Check permissions and delete messages
+		if (message.member.roles.cache.some(role => properties.AdminRoles.includes(role.name)) || properties.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id) { // Check permissions
+			if (!isNaN(args[0]) && parseInt(args[0]) >= 0) { // Check for number then delete
 				message.channel.messages.fetch({ limit: parseInt(args[0]) }).then(messages => {
 					message.channel.bulkDelete(messages)
 				});
-				const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Clear Chat').setDescription(`Cleared ${args[0]} messages.`);
-				message.reply(embed);
-			}
-		} else {
-			const embed = new Discord.MessageEmbed().setColor(0x003CFF).setTitle('Clear Chat').setDescription("You do not have permission to use this command.");
-			message.reply(embed);
-		};
+				message.reply(replyEmbed.setColor(0x003CFF).setTitle('Clear Chat').setDescription(`Cleared ${args[0]} messages.`));
+				return 'Good';
+			} else return 'Unknown';
+		} else return 'Permission';;
 	}
 }
