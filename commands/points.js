@@ -24,7 +24,7 @@ module.exports = {
 				} else if (message.mentions.members.first()) {
 					let memberPoints = message.mentions.members.first()
 					try {
-						profileData = await profileModel.findOne({ userID: memberPoints.user.id });
+						profileData = await profileModel.findOne({ userID: memberPoints.user.id , serverID: message.guild.id});
 						if (!profileData) {
 							let profile = await profileModel.create({
 								userID: memberPoints.user.id,
