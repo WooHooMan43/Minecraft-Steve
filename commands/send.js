@@ -1,5 +1,5 @@
 // Require modules
-const fs = require('fs');
+const profileModel = require('../models/profileSchema');
 
 module.exports = {
 	name: 'send',
@@ -7,28 +7,28 @@ module.exports = {
 	viewable: true,
 	admin: false,
 	subcommands: '[@User] [Points]',
-	async execute(client, message, args, Discord, replyEmbed){
-		if (fs.existsSync(`guilds/${message.guild.id}/points.json`)) {
-			let serverpoints_raw = fs.readFileSync(`./guilds/${message.guild.id}/points.json`);
-			var serverpoints = JSON.parse(serverpoints_raw);
-		} else {
-			var serverpoints = {};
+	async execute(client, message, args, Discord, replyEmbed, data){
+		let recievedMember = message.mentions.members.first();
+		let profileData = data[1]
+		let recieverData;
+		try {
+			recieverData = await profileModel.findOne({ userID: recievedMember.user.id });
+			if (!recieverData) {
+				let profile = await profileModel.create({
+					userID: recievedMember.user.id,
+					serverID: message.guild.id
+				});
+				profile.save();
+			}
+		} catch (err) {
+			console.error(err);
 		};
-
-		let recievedMember = message.mentions.members.first()
-		if (!isNaN(args[1]) && args[1] >= 0 && args[1] <= serverpoints[message.member.id] && !recievedMember.user.bot) { // Send points if its a number
-			var pointsSent = parseInt(args[1])
-			serverpoints[message.member.id] -= pointsSent
-			serverpoints[recievedMember.user.id] += pointsSent
+		if (!isNaN(args[1]) && parseInt(args[1]) >= 0 && parseInt(args[1]) <= profileData.coins && !recievedMember.user.bot) { // Send points if its a number
+			var pointsSent = parseInt(args[1]);
+			const responseSender = await profileModel.findOneAndUpdate({ userID: message.author.id, serverID: message.guild.id }, { $inc: { coins : pointsSent * -1 } })
+			const responseReciever = await profileModel.findOneAndUpdate({ userID: recievedMember.user.id, serverID: message.guild.id }, { $inc: { coins : pointsSent } })
 			message.reply(replyEmbed.setColor(0xFFC300).setTitle('Points').setDescription(`Sent ${args[1]} points to ${recievedMember.user.tag}.`));
-
-			// Save points file
-			let serverpoints_new = JSON.stringify(serverpoints);
-			fs.writeFileSync(`./guilds/${message.guild.id}/points.json`, serverpoints_new, function(err, result) {
-				if(err) console.log('error', err);
-				console.log(`Saved points of ${message.guild.name}.`)
-			});
 			return 'Good';
-		} else return 'Unknown';;
+		} else return 'Unknown';
 	}
 }

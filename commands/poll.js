@@ -4,7 +4,7 @@ module.exports = {
 	viewable: true,
 	admin: false,
 	subcommands: {'YN [Title]': 'Create a poll to vote to do something.', '2 [Title]; [Option 1]; [Option 2]': 'Create a poll to choose between 2 options.', '3 [Title]; [Option 1]; [Option 2]; [Option 3]': 'Create a poll to choose between 3 options.', '4 [Title]; [Option 1]; [Option 2]; [Option 3]; [Option 4]': 'Create a poll to choose between 4 options.'},
-	async execute(client, message, args, Discord, replyEmbed){
+	async execute(client, message, args, Discord, replyEmbed, data){
 		var pollArgs = args.slice(1).join(' ').split(';');
 		
 		if (args[0] === 'YN'){ // Make a yes or no poll

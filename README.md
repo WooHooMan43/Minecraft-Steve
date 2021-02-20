@@ -32,7 +32,8 @@ There are a plethora of commands for both server members and administrators, all
   - Gets the member's points on that server.
 - `!send [@User] [Value]`
   - Sends a member some points.
-- `!gift` and its subcommands
+
+<!-- - `!gift` and its subcommands
   - `!gift all [Value]`
     - Give everyone (except you and bots) an even, clean portion of points.  
     *__Note:__ On large servers, a lot of points are required to give any to users.*
@@ -40,7 +41,7 @@ There are a plethora of commands for both server members and administrators, all
     - Give some random users (who are not you or a bot) an even, clean portion of points.  
     *__Note:__ With large numbers of users, a lot of points are required to give any to them.*
   - `!gift one [Value] [Users]`
-    - Give a random user (who is not you or a bot) some points.
+    - Give a random user (who is not you or a bot) some points. -->
 
 ### Administrator Commands
 
@@ -74,7 +75,7 @@ Administrators are those who have the correct roles, have an exception in the co
 - `!config` and its subcommands.
   - `!config adminroles list`
     - List roles with permissions.
-  - `!config adminroles [add/remove] [Role Name]`
+  - `!config adminroles [add/remove] [@Role]`
     - Change roles with permissions.
   - `!points userexceptions list`
     - List users with permissions.

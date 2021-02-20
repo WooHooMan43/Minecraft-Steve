@@ -4,7 +4,7 @@ module.exports = {
 	viewable: false,
 	admin: false,
 	subcommands: '',
-	async execute(client, message, args, Discord, replyEmbed){
+	async execute(client, message, args, Discord, replyEmbed, data){
 		message.reply('pong!');
 		return 'Good';
 	}

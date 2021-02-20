@@ -13,6 +13,7 @@
     "dotenv": "^8.2.0",
     "minecraft-motd-parser": "^1.0.1",
     "minecraft-server-util": "^3.0.3",
+    "mongoose": "^5.11.17",
     "ms": "^2.1.3"
   }
 }
