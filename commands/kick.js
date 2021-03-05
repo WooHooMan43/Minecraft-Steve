@@ -1,8 +1,8 @@
 module.exports = {
 	name: 'kick',
-	description: "Removes a user from the server.",
-	viewable: false,
-	admin: true,
+	description: 'Removes a user from the server.',
+	access: [false, true],
+	cooldown: 0,
 	subcommands: '[@User] (Reason)',
 	async execute(client, message, args, Discord, replyEmbed, data){
 		let serverData = data[0];

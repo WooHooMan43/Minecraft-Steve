@@ -1,8 +1,8 @@
 module.exports = {
 	name: 'poll',
-	description: "Creates a poll for members to vote on.",
-	viewable: true,
-	admin: false,
+	description: 'Creates a poll for members to vote on.',
+	access: [true, false],
+	cooldown: 300,
 	subcommands: {'YN [Title]': 'Create a poll to vote to do something.', '2 [Title]; [Option 1]; [Option 2]': 'Create a poll to choose between 2 options.', '3 [Title]; [Option 1]; [Option 2]; [Option 3]': 'Create a poll to choose between 3 options.', '4 [Title]; [Option 1]; [Option 2]; [Option 3]; [Option 4]': 'Create a poll to choose between 4 options.'},
 	async execute(client, message, args, Discord, replyEmbed, data){
 		var pollArgs = args.slice(1).join(' ').split(';');

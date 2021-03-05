@@ -1,8 +1,8 @@
 module.exports = {
 	name: 'clearchat',
-	description: "Deletes a certain number preceding messages.",
-	viewable: false,
-	admin: true,
+	description: 'Deletes a certain number preceding messages.',
+	access: [false, true],
+	cooldown: 0,
 	subcommands: '[Value]',
 	async execute(client, message, args, Discord, replyEmbed, data){
 		let serverData = data[0]

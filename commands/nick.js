@@ -1,8 +1,8 @@
 module.exports = {
 	name: 'nick',
-	description: "Changes a user's nickname.",
-	viewable: true,
-	admin: false,
+	description: 'Changes a user\'s nickname.',
+	access: [true, false],
+	cooldown: 60,
 	subcommands: '[Name]',
 	async execute(client, message, args, Discord, replyEmbed, data){
 		if (args[0] != undefined && message.guild.ownerID !== message.member.id) { // Check if they entered a nickname and if they are not the owner

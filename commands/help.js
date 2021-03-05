@@ -1,15 +1,15 @@
 module.exports = {
 	name: 'help',
-	description: "Displays the help menu.",
-	viewable: true,
-	admin: false,
+	description: 'Displays the help menu.',
+	access: [true, false],
+	cooldown: 10,
 	subcommands: '[Command]',
 	async execute(client, message, args, Discord, replyEmbed, data){
-		let serverData  = data[0];
+		let serverData = data[0];
 
 		if (args.length == 0) {
 			client.commands.forEach(command => {
-				if ((command.admin && (message.member.roles.cache.some(role => serverData.AdminRoles.includes(role.name)) || serverData.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id)) || !command.admin || command.viewable) {
+				if ((command.admin && (message.member.roles.cache.some(role => serverData.AdminRoles.includes(role.name)) || serverData.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id)) || !command.access[1] || command.access[0]) {
 					if (typeof command.subcommands == 'string') replyEmbed.addField(`!${command.name} ${command.subcommands}`, command.description, true);
 					else replyEmbed.addField(`!${command.name}`, command.description, true);
 				}
@@ -18,7 +18,7 @@ module.exports = {
 			return 'Good';
 		} else if (client.commands.some(command => command.name == args[0])) {
 			let command = client.commands.get(args[0])
-			if ((command.admin && (message.member.roles.cache.some(role => serverData.AdminRoles.includes(role.name)) || serverData.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id)) || !command.admin) {
+			if ((command.admin && (message.member.roles.cache.some(role => serverData.AdminRoles.includes(role.name)) || serverData.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id)) || !command.access[1]) {
 				if (typeof command.subcommands == 'object') {
 					Object.keys(command.subcommands).forEach(subcommand => {
 						replyEmbed.addField(`!${args[0]} ${subcommand}`, command.subcommands[subcommand], true)

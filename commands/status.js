@@ -5,9 +5,9 @@ const parser = require('minecraft-motd-parser');
 
 module.exports = {
 	name: 'status',
-	description: "Displays information about a set Minecraft server.",
-	viewable: true,
-	admin: false,
+	description: 'Displays information about a set Minecraft server.',
+	access: [true, false],
+	cooldown: 60,
 	subcommands: '',
 	async execute(client, message, args, Discord, replyEmbed, data){
 		let serverData = data[0]
@@ -17,7 +17,7 @@ module.exports = {
 				var motd = '';
 				parser.parse(response.description.descriptionText, function(err, result) { // Parse the original motd into JSON
 					result.forEach(element => {
-						motd += element.string.split("Â")[0]; // Go through each JSON element's string value and remove all chars before the A thing
+						motd += element.string.split('Â')[0]; // Go through each JSON element's string value and remove all chars before the A thing
 					});
 				});
 				// Format the icon and send it

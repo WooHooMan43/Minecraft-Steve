@@ -22,7 +22,7 @@ mongoose.connect(process.env.MONGODB_SRV, {
 	useUnifiedTopology: true,
 	useFindAndModify: false
 }).then(() => {
-	console.log(`Connected to`)
+	console.log(`Connected to Discord Bot Database`)
 }).catch((err) => {
 	console.error(err);
 });
