@@ -1,19 +1,27 @@
 {
-  "name": "minecraft-steve",
-  "version": "1.0.0",
-  "description": "A discord bot that relays information about a minecraft server and gives points to members for activity.",
-  "main": "main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Nicklas Pawlicki",
-  "license": "ISC",
-  "dependencies": {
-    "discord.js": "^12.3.1",
-    "dotenv": "^8.2.0",
-    "minecraft-motd-parser": "^1.0.1",
-    "minecraft-server-util": "^3.0.3",
-    "mongoose": "^5.11.17",
-    "ms": "^2.1.3"
-  }
+	"name": "minecraft-steve",
+	"version": "1.0.0",
+	"description": "## What does it do?",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/WooHooMan43/Minecraft-Steve.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/WooHooMan43/Minecraft-Steve/issues"
+	},
+	"homepage": "https://github.com/WooHooMan43/Minecraft-Steve#readme",
+	"dependencies": {
+		"discord.js": "^13.8.1",
+		"dotenv": "^16.0.1",
+		"leveldown": "^6.1.1",
+		"levelup": "^5.1.1",
+		"minecraft-server-util": "^5.2.10"
+	}
 }

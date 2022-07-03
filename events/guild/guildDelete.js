@@ -1,8 +1,14 @@
-// Require modules
-const settingsModel = require('../../models/settingsSchema');
+const { Client, Guild } = require("discord.js");
+// const settingsModel = require("../../models/settingsSchema");
 
-module.exports = (Discord, client, guild) => {
-	let server = settingsModel.findOneAndRemove({ serverID: guild.id });
+/**
+ * @param {Client} client
+ * @param {Guild} guild
+ */
+module.exports = (client, guild) => {
+	// let server = settingsModel.findOneAndRemove({ serverID: guild.id });
 
-	console.log(`Steve has been removed from '${guild.name}'.`);
-}
+	console.log(
+		`[${new Date().toISOString()}] Steve has been removed from '${guild.name}'.`
+	);
+};

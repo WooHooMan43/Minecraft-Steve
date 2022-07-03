@@ -1,64 +1,154 @@
-// Require modules
-const profileModel = require('../models/profileSchema');
-
-//to round up to two decimal places. Courtesy of Rodaine and Community on StackOverflow
-function money_round(num) {
-	if (!isNaN(num)) return Math.ceil(num * 100) / 100;
-}
+const {
+	Client,
+	InteractionReplyOptions,
+	MessageEmbed,
+	CommandInteraction,
+	ApplicationCommandData,
+	Permissions,
+} = require("discord.js");
+const levelup = require("levelup");
+const leveldown = require("leveldown");
+const { encode, decode } = require("../utils");
 
 module.exports = {
-	name: 'bank',
-	description: 'View, deposit, and withdraw money in your wallet and bank.',
-	access: [true, true],
-	cooldown: 10,
-	subcommands: {'deposit [Value]': 'Deposit money into your bank.', 'withdraw [Value]': 'Withdraw money from your bank.', 'send [@User] [Value]': 'Send money to the bank of a member.', '[@User]': 'View the bank of a member.', '[@User] [give/take/set] [Value]': 'Modify the bank of a member.'},
-	async execute(client, message, args, Discord, replyEmbed, data){
-		let serverData = data[0];
-		let profileData = data[1];
+	// /** @type {ApplicationCommandData} */
+	data: {
+		name: "bank",
+		description: "View bank information.",
+		defaultPermission: true,
+		default_member_permissions: String(Permissions.DEFAULT),
+		options: [
+			{
+				name: "view",
+				description: "View your current balance",
+				type: "SUB_COMMAND",
+			},
+			// {
+			// 	name: "deposit",
+			// 	description: "Deposit money into your account.",
+			// 	type: "SUB_COMMAND",
+			// 	options: [
+			// 		{
+			// 			name: "amount",
+			// 			description: "Deposit amount",
+			// 			type: "NUMBER",
+			// 			required: true,
+			// 		},
+			// 	],
+			// },
+			// {
+			// 	name: "withdraw",
+			// 	description: "Withdraw money from your account.",
+			// 	type: "SUB_COMMAND",
+			// 	options: [
+			// 		{
+			// 			name: "amount",
+			// 			description: "Deposit amount",
+			// 			type: "NUMBER",
+			// 			required: true,
+			// 		},
+			// 	],
+			// },
+			{
+				name: "transfer",
+				description: "Transfer money to someone's account.",
+				type: "SUB_COMMAND",
+				options: [
+					{
+						name: "amount",
+						description: "Transfer amount",
+						type: "NUMBER",
+						min_value: 0,
+						required: true,
+					},
+					{
+						name: "user",
+						description: "User to transfer to.",
+						type: "USER",
+						required: true,
+					},
+				],
+			},
+		],
+	},
+	/**
+	 * @param {Client} client
+	 * @param {CommandInteraction} interaction
+	 * @param {{ view: {}; transfer:? { amount: number; user: string }}} options
+	 * @returns {Promise<InteractionReplyOptions>}
+	 */
+	async execute(client, interaction, options) {
+		if (!interaction.member) return {};
 
-		if (args[0] === undefined) {
-			message.reply(replyEmbed.setColor(0xFFC300).setTitle(serverData.Currency.name).addField('Wallet', `**${serverData.Currency.symbol}**${profileData.coins}`, true).addField('Bank', `**${serverData.Currency.symbol}**${profileData.bank}`, true));
-			return 'Good';
-		} else if (args[0] === 'deposit') {
-			let deposit = money_round(Number(args[1]));
-			if (deposit >= 0 && profileData.coins >= deposit) { // Check for number then delete
-				const response = await profileModel.findOneAndUpdate({ userID: message.author.id, serverID: message.guild.id }, { $inc: { coins : -deposit, bank: deposit } }, { new: true });
-				message.reply(replyEmbed.setColor(0xFFC300).setTitle(serverData.Currency.name).setDescription(`Deposited **${serverData.Currency.symbol}**${deposit} into your bank.`).addField('Wallet', `**${serverData.Currency.symbol}**${response.coins}`, true).addField('Bank', `**${serverData.Currency.symbol}**${response.bank}`, true));
-				return 'Good';
-			} else return 'Unknown';
-		} else if (args[0] === 'withdraw') {
-			let withdrawl = money_round(Number(args[1]));
-			if (withdrawl >= 0 && profileData.bank >= withdrawl) { // Check for number then delete
-				const response = await profileModel.findOneAndUpdate({ userID: message.author.id, serverID: message.guild.id }, { $inc: { coins : withdrawl, bank: -withdrawl } }, { new: true });
-				message.reply(replyEmbed.setColor(0xFFC300).setTitle(serverData.Currency.name).setDescription(`Withdrew **${serverData.Currency.symbol}**${withdrawl} from your bank.`).addField('Wallet', `**${serverData.Currency.symbol}**${response.coins}`, true).addField('Bank', `**${serverData.Currency.symbol}**${response.bank}`, true));
-				return 'Good';
-			} else return 'Unknown';
-		} else if (args[0] === 'send') {
-			let transfer = money_round(Number(args[2]));
-			let recipient = message.mentions.members.first();
-			if (recipient && args[1].replace(/[<!@>]/g, '') === recipient.user.id && !recipient.user.bot && transfer >= 0 && profileData.bank >= transfer) {
-				let response = await profileModel.findOneAndUpdate({ userID: message.author.id, serverID: message.guild.id }, { $inc: { bank: -transfer } }, { new: true });
-				await profileModel.findOneAndUpdate({ userID: recipient.user.id, serverID: message.guild.id }, { $inc: { bank: transfer } });
-				message.reply(replyEmbed.setColor(0xFFC300).setTitle(serverData.Currency.name).setDescription(`Transferred **${serverData.Currency.symbol}**${transfer} into <@${recipient.user.id}>'s bank.`).addField('Wallet', `**${serverData.Currency.symbol}**${response.coins}`, true).addField('Bank', `**${serverData.Currency.symbol}**${response.bank}`, true));
-			} else return 'Unknown';
-		} else if ((message.member.roles.cache.some(role => serverData.AdminRoles.includes(role.name)) || serverData.UserExceptions.includes(message.member.id) || message.guild.ownerID == message.member.id)) {
-			let amount = money_round(Number(args[2]));
-			let recipient = message.mentions.members.first();
-			if (recipient && args[0].replace(/[<!@>]/g, '') === recipient.user.id && !recipient.user.bot) {
-				if (args[1] === undefined) {
-					let response = await profileModel.findOne({ userID: recipient.user.id, serverID: message.guild.id });
-					message.reply(replyEmbed.setColor(0xFFC300).setTitle(serverData.Currency.name).addField('Wallet', `**${serverData.Currency.symbol}**${recieverData.coins}`, true).addField('Bank', `**${serverData.Currency.symbol}**${receiverData.bank}`, true));
-				} else if (args[1] === 'give') {
-					let response = await profileModel.findOneAndUpdate({ userID: recipient.user.id, serverID: message.guild.id }, { $inc: { bank: amount } }, { new: true });
-					message.reply(replyEmbed.setColor(0xFFC300).setTitle(serverData.Currency.name).setDescription(`Added **${serverData.Currency.symbol}**${amount} to <@${recipient.user.id}>'s bank.`).addField('Wallet', `**${serverData.Currency.symbol}**${response.coins}`, true).addField('Bank', `**${serverData.Currency.symbol}**${response.bank}`, true));
-				} else if (args[1] === 'take') {
-					let response = await profileModel.findOneAndUpdate({ userID: recipient.user.id, serverID: message.guild.id }, { $inc: { bank: -amount } }, { new: true });
-					message.reply(replyEmbed.setColor(0xFFC300).setTitle(serverData.Currency.name).setDescription(`Removed **${serverData.Currency.symbol}**${amount} from <@${recipient.user.id}>'s bank.`).addField('Wallet', `**${serverData.Currency.symbol}**${response.coins}`, true).addField('Bank', `**${serverData.Currency.symbol}**${response.bank}`, true));
-				} else if (args[1] === 'set') {
-					let response = await profileModel.findOneAndUpdate({ userID: recipient.user.id, serverID: message.guild.id }, { $set: { bank: amount } }, { new: true });
-					message.reply(replyEmbed.setColor(0xFFC300).setTitle(serverData.Currency.name).setDescription(`Removed **${serverData.Currency.symbol}**${amount} from <@${recipient.user.id}>'s bank.`).addField('Wallet', `**${serverData.Currency.symbol}**${response.coins}`, true).addField('Bank', `**${serverData.Currency.symbol}**${response.bank}`, true));
-				} else return 'Unknown';
-			} else return 'Unknown';
-		} else return 'Unknown';
-	}
-}
+		// @ts-ignore
+		const guildDB = levelup(leveldown("./guilds"));
+		// @ts-ignore
+		const userDB = levelup(leveldown("./users"));
+
+		var guildData = { currency: { name: "Diamonds", symbol: "💎 " } };
+		guildDB.get(interaction.guildId).then((value) => {
+			guildData = decode(value);
+			guildDB.close();
+		});
+
+		const embed = new MessageEmbed()
+			.setTitle(guildData.currency.name)
+			.setColor("YELLOW");
+
+		await userDB
+			.get(`${interaction.guildId}-${interaction.member.user.id}`)
+			.then(async (value) => {
+				if (options.view) {
+					let val = decode(value);
+					embed.setDescription(`${guildData.currency.symbol}${val.bank}`);
+				} else if (options.transfer) {
+					const amount = options.transfer.amount;
+					let senderData = decode(value);
+					await userDB
+						.get(`${interaction.guildId}-${options.transfer.user}`)
+						.then(async (receiver) => {
+							let receiverData = decode(receiver);
+							senderData.bank -= amount;
+							receiverData.bank += amount;
+							// I SHOULDNT NEED THIS CHECK ITS ALREADY DONE
+							if (interaction.member && options.transfer) {
+								await userDB.put(
+									`${interaction.guildId}-${interaction.member.user.id}`,
+									encode(senderData)
+								);
+								await userDB.put(
+									`${interaction.guildId}-${options.transfer.user}`,
+									encode(receiverData)
+								);
+								embed
+									.setDescription(
+										`Transfered ${guildData.currency.symbol}${amount}.`
+									)
+									.addField(
+										`${guildData.currency.symbol}${senderData.bank}`,
+										`-${guildData.currency.symbol}${amount}`
+									);
+							}
+						})
+						.catch((err) => {
+							if (err && err.type == "NotFoundError") {
+								embed
+									.setDescription("User not found.")
+									.addField(
+										`${guildData.currency.symbol}${senderData.bank}`,
+										""
+									);
+							}
+						});
+				}
+			})
+			.catch((error) => {
+				if (error && error.type == "NotFoundError") {
+					embed.setDescription("An error occured.");
+				}
+			})
+			.finally(() => userDB.close());
+
+		return { embeds: [embed], ephemeral: true };
+	},
+};

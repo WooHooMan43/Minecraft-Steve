@@ -1,2 +1,6 @@
 # Ignore unfinished commands
 commands-wip
+
+# Ignore databases because I moved back to stupid things
+users
+guilds
